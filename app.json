@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "course-advising",
-    "slug": "course-advising",
+    "name": "student-course-advising-frontend",
+    "slug": "student-course-advising-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "courseadvising",
+    "scheme": "studentcourseadvisingfrontend",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
