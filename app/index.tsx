@@ -1,6 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useTheme } from "@react-navigation/native";
+import { Text, View } from "react-native";
+
+import { createHomeStyles } from "@/styles/global";
+
 
 export default function HomeScreen() {
+  const { colors, dark } = useTheme();
+  const styles = createHomeStyles(colors, dark);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hello World</Text>
@@ -9,22 +15,3 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 16,
-    color: "#333",
-  },
-  subtitle: {
-    fontSize: 18,
-    color: "#666",
-    textAlign: "center",
-  },
-}); 
