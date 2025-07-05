@@ -1,12 +1,13 @@
-import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     DarkTheme,
     DefaultTheme,
     ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -16,6 +17,17 @@ export default function RootLayout(): React.JSX.Element | null {
     const [loaded] = useFonts({
         SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     });
+    const router = useRouter();
+
+    useEffect(() => {
+        const checkLogin = async () => {
+            const studentId = await AsyncStorage.getItem("student_id");
+            if (studentId === null) {
+                router.replace("/(auth)/login");
+            }
+        };
+        checkLogin();
+    }, [router]);
 
     if (!loaded) {
         return null;
@@ -26,8 +38,10 @@ export default function RootLayout(): React.JSX.Element | null {
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
             <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
+                <Stack.Screen name="index" options={{ title: "Home" }} />
+
             </Stack>
             <StatusBar style="auto" />
         </ThemeProvider>
