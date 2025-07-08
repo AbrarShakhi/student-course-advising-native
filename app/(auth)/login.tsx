@@ -82,7 +82,11 @@ export default function LoginScreen() {
           >
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleLogin}>
+          <TouchableOpacity
+            onPress={handleLogin}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
             <LinearGradient
               colors={[
                 "rgba(42,123,155,1)",

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
+  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,6 +14,7 @@ import { createActivateStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { patch, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
+import { router } from "expo-router";
 
 const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=2`;
 const ACTIVATE_URL = `${API_URL}/activate`;
@@ -34,8 +35,8 @@ export default function ActivateScreen() {
     }
     setLoading(true);
     try {
-      const response = await patch(SEND_OTP_URL, {
-        studentId: studentId,
+      await patch(SEND_OTP_URL, {
+        student_id: studentId,
       });
 
       setOtpSent(true);
@@ -60,6 +61,10 @@ export default function ActivateScreen() {
         otp,
       });
       showAlert("Success", "Account activated! You can now log in.");
+      setStudentId("");
+      setOtp("");
+      setPassword("");
+      router.replace("/(auth)/login");
     } catch (error: any) {
       showAlert("Error", error.message || "Activation failed.");
     } finally {
@@ -68,67 +73,61 @@ export default function ActivateScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "android" ? "padding" : "height"}
+        style={{ flex: 1, justifyContent: "space-between" }}
       >
-        <View style={styles.card}>
+        <View style={styles.header}>
           <Text style={styles.title}>Activate Account</Text>
           <Text style={styles.subtitle}>
             Enter your student ID to receive an OTP
           </Text>
+        </View>
 
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Student ID</Text>
+        <View style={styles.formContainer}>
+          {!otpSent ? (
+            <>
               <TextInput
                 style={styles.input}
                 value={studentId}
+                className="student-id-input"
                 onChangeText={setStudentId}
                 autoCapitalize="none"
                 keyboardType="default"
                 placeholder="Enter your student ID"
                 placeholderTextColor={colors.text + "80"}
               />
-            </View>
-            <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
-              onPress={handleSendOtp}
-              disabled={loading}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? "Sending OTP..." : "Send OTP"}
-              </Text>
-            </TouchableOpacity>
-            {otpSent && (
+              <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleSendOtp}
+                disabled={loading}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? "Sending OTP..." : "Send OTP"}
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            otpSent && (
               <>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>OTP</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={otp}
-                    onChangeText={setOtp}
-                    keyboardType="number-pad"
-                    placeholder="Enter OTP"
-                    placeholderTextColor={colors.text + "80"}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>New Password</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                    placeholder="Enter new password"
-                    placeholderTextColor={colors.text + "80"}
-                  />
-                </View>
+                <TextInput
+                  style={styles.input}
+                  value={otp}
+                  onChangeText={setOtp}
+                  keyboardType="number-pad"
+                  placeholder="Enter OTP"
+                  placeholderTextColor={colors.text + "80"}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  placeholder="Enter new password"
+                  placeholderTextColor={colors.text + "80"}
+                />
                 <TouchableOpacity
                   style={[styles.button, loading && styles.buttonDisabled]}
                   onPress={handleActivate}
@@ -140,10 +139,10 @@ export default function ActivateScreen() {
                   </Text>
                 </TouchableOpacity>
               </>
-            )}
-          </View>
+            )
+          )}
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
