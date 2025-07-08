@@ -12,7 +12,7 @@ import {
 
 import { createActivateStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
-import { post } from "@/utils/fetch";
+import { patch, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
 
 const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=2`;
@@ -34,20 +34,14 @@ export default function ActivateScreen() {
     }
     setLoading(true);
     try {
-      const response = await fetch(SEND_OTP_URL, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ student_id: studentId }),
+      const response = await patch(SEND_OTP_URL, {
+        studentId: studentId,
       });
-      if (response.ok) {
-        setOtpSent(true);
-        showAlert("OTP Sent", "Check your email for the OTP.");
-      } else {
-        const data = await response.json();
-        showAlert("Error", data.detail || "Failed to send OTP.");
-      }
-    } catch (error) {
-      showAlert("Error", "Could not connect to server");
+
+      setOtpSent(true);
+      showAlert("OTP Sent", "Check your email for the OTP.");
+    } catch (error: any) {
+      showAlert("Error", error.message || "Failed to send OTP.");
     } finally {
       setLoading(false);
     }
