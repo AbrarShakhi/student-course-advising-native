@@ -1,0 +1,11 @@
+export async function post<T>(url: string, data: any): Promise<T> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error(`POST ${url} failed: ${response.statusText}`);
+  }
+  return response.json();
+}

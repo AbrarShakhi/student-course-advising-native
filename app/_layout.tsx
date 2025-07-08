@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack, useRouter } from "expo-router";
@@ -13,37 +13,34 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function RootLayout(): React.JSX.Element | null {
-    const colorScheme = useColorScheme();
-    const [loaded] = useFonts({
-        SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    });
-    const router = useRouter();
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+  });
+  const router = useRouter();
 
-    useEffect(() => {
-        const checkLogin = async () => {
-            const studentId = await AsyncStorage.getItem("student_id");
-            if (studentId === null) {
-                router.replace("/(auth)/login");
-            }
-        };
-        checkLogin();
-    }, [router]);
+  useEffect(() => {
+    const checkLogin = async () => {
+      const studentId = await AsyncStorage.getItem("student_id");
+      if (studentId === null) {
+        router.replace("/(auth)/login");
+      }
+    };
+    checkLogin();
+  }, [router]);
 
-    if (!loaded) {
-        return null;
-    }
+  if (!loaded) {
+    return null;
+  }
 
-    return (
-        <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-            <Stack>
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-                <Stack.Screen name="index" options={{ title: "Home" }} />
-
-            </Stack>
-            <StatusBar style="auto" />
-        </ThemeProvider>
-    );
+  return (
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="index" options={{ title: "Home" }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
+  );
 }
