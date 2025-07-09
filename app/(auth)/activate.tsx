@@ -14,6 +14,7 @@ import { createActivateStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { patch, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 
 const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=2`;
@@ -26,6 +27,7 @@ export default function ActivateScreen() {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const { colors, dark } = useTheme();
+
   const styles = createActivateStyles(colors, dark);
 
   const handleSendOtp = async () => {
@@ -104,9 +106,20 @@ export default function ActivateScreen() {
                 disabled={loading}
                 activeOpacity={0.8}
               >
-                <Text style={styles.buttonText}>
-                  {loading ? "Sending OTP..." : "Send OTP"}
-                </Text>
+                <LinearGradient
+                  colors={[
+                    "rgba(42,123,155,1)",
+                    "rgba(87,135,217,1)",
+                    "rgba(87,193,199,1)",
+                  ]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    {loading ? "Sending OTP..." : "Send OTP"}
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </>
           ) : (
@@ -134,9 +147,20 @@ export default function ActivateScreen() {
                   disabled={loading}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.buttonText}>
-                    {loading ? "Activating..." : "Submit"}
-                  </Text>
+                  <LinearGradient
+                    colors={[
+                      "rgba(42,123,155,1)",
+                      "rgba(87,135,217,1)",
+                      "rgba(87,193,199,1)",
+                    ]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      {loading ? "Activating..." : "Submit"}
+                    </Text>
+                  </LinearGradient>
                 </TouchableOpacity>
               </>
             )

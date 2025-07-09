@@ -23,13 +23,14 @@ export const createHomeStyles = (colors: any, theme: any) =>
     },
   });
 
-export const createActivateStyles = (colors: any, dark: boolean) =>
-  StyleSheet.create({
+export const createActivateStyles = (colors: any, dark: boolean) => {
+  //For mobile
+  const baseStyles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
       justifyContent: "space-between",
-      paddingTop: Platform.OS === "android" ? 80 : 40,
+      paddingTop: Platform.OS === "android" ? 60 : 40,
       paddingBottom: 24,
     },
     header: {
@@ -60,13 +61,15 @@ export const createActivateStyles = (colors: any, dark: boolean) =>
       marginBottom: 16,
       borderWidth: 0,
     },
+
     button: {
-      backgroundColor: colors.primary,
       borderRadius: 12,
       padding: 20,
+      width: "100%",
       alignItems: "center",
       justifyContent: "center",
-      marginTop: 8,
+      marginTop: 2,
+      fontSize: 16,
     },
     buttonDisabled: {
       backgroundColor: dark ? "#6B7280" : "#9CA3AF",
@@ -78,8 +81,43 @@ export const createActivateStyles = (colors: any, dark: boolean) =>
     },
   });
 
-export const createLoginStyles = (colors: any, dark: boolean) =>
-  StyleSheet.create({
+  //For web
+  if (Platform.OS === "web") {
+    return StyleSheet.create({
+      ...baseStyles,
+      container: {
+        ...baseStyles.container,
+        paddingTop: 40,
+        justifyContent: "center",
+      },
+
+      formContainer: {
+        ...baseStyles.formContainer,
+        maxWidth: 480,
+        width: "100%",
+        alignSelf: "center",
+        borderRadius: 16,
+        padding: 40,
+      },
+
+      title: {
+        ...baseStyles.title,
+        textAlign: "center",
+      },
+
+      subtitle: {
+        ...baseStyles.subtitle,
+        textAlign: "center",
+      },
+    });
+  }
+
+  return baseStyles;
+};
+
+export const createLoginStyles = (colors: any, dark: boolean) => {
+  // For mobile
+  const baseStyles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -147,3 +185,36 @@ export const createLoginStyles = (colors: any, dark: boolean) =>
       fontWeight: "500",
     },
   });
+
+  // For Web
+  if (Platform.OS === "web") {
+    return StyleSheet.create({
+      ...baseStyles,
+
+      container: {
+        ...baseStyles.container,
+        paddingTop: 40,
+        justifyContent: "center",
+      },
+
+      formContainer: {
+        ...baseStyles.formContainer,
+        maxWidth: 480,
+        width: "100%",
+        alignSelf: "center",
+        borderRadius: 16,
+        padding: 40,
+      },
+      title: {
+        ...baseStyles.title,
+        textAlign: "center",
+      },
+      subtitle: {
+        ...baseStyles.subtitle,
+        textAlign: "center",
+      },
+    });
+  }
+
+  return baseStyles;
+};
