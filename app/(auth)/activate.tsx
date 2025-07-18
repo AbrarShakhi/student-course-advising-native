@@ -42,9 +42,11 @@ export default function ActivateScreen() {
       });
 
       setOtpSent(true);
-      showAlert("OTP Sent", "Check your email for the OTP.");
+      showAlert("Info", "Check your email for the OTP.");
     } catch (error: any) {
-      showAlert("Error", error.message || "Failed to send OTP.");
+      showAlert("Error", "Failed to send OTP.");
+      console.error("Send OTP error: ", error);
+      setOtpSent(false);
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,8 @@ export default function ActivateScreen() {
       setPassword("");
       router.replace("/(auth)/login");
     } catch (error: any) {
-      showAlert("Error", error.message || "Activation failed.");
+      showAlert("Error", "Activation failed.", "error");
+      console.error("Activation error: ", error);
     } finally {
       setLoading(false);
     }

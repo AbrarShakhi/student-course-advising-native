@@ -88,7 +88,7 @@ export const createActivateStyles = (colors: any, dark: boolean) => {
       flex: 1,
       backgroundColor: colors.background,
       justifyContent: "space-between",
-      paddingTop: Platform.OS === "android" ? 60 : 40,
+      paddingTop: Platform.OS === "android" ? 30 : 40,
       paddingBottom: 24,
     },
     header: {
@@ -198,7 +198,7 @@ export const createLoginStyles = (colors: any, dark: boolean) => {
     },
     formContainer: {
       paddingHorizontal: 24,
-      paddingBottom: 24,
+      paddingBottom: 2,
     },
     input: {
       backgroundColor: dark
