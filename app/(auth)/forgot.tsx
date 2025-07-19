@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=2`;
+const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=1`;
 const ForgotURL = `${API_URL}/forgot-password`;
 
 export default function forgot() {
