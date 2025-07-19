@@ -1,4 +1,11 @@
+import { createActivateStyles } from "@/styles/global";
+import { API_URL } from "@/utils/api";
+import { patch, post } from "@/utils/fetch";
+import showAlert from "@/utils/showAlert";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useTheme } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -9,13 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { createActivateStyles } from "@/styles/global";
-import { API_URL } from "@/utils/api";
-import { patch, post } from "@/utils/fetch";
-import showAlert from "@/utils/showAlert";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
 
 const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=2`;
 const ACTIVATE_URL = `${API_URL}/activate`;
@@ -83,6 +83,12 @@ export default function ActivateScreen() {
         style={{ flex: 1, justifyContent: "space-between" }}
       >
         <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <AntDesign name="left" size={20} color="white" />
+          </TouchableOpacity>
           <Text style={styles.title}>Activate Account</Text>
           <Text style={styles.subtitle}>
             Enter your student ID to receive an OTP

@@ -43,7 +43,7 @@ export default function AccountScreen() {
   };
 
   const handleChangePassword = () => {
-    // Handle change password logic
+    router.push("/(auth)/forgot");
   };
 
   // if (!userData) {

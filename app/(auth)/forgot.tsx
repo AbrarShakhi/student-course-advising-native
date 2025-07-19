@@ -2,6 +2,7 @@ import { createForgotStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { patch, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useTheme } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -82,6 +83,12 @@ export default function forgot() {
         style={{ flex: 1, justifyContent: "space-between" }}
       >
         <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <AntDesign name="left" size={20} color="white" />
+          </TouchableOpacity>
           <Text style={styles.title}>Reset Password</Text>
           <Text style={styles.subtitle}>
             Enter your student ID to receive an OTP

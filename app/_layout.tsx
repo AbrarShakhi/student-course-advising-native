@@ -37,11 +37,15 @@ export default function RootLayout(): React.JSX.Element | null {
     success: (props: any) => (
       <BaseToast
         {...props}
-        style={{ backgroundColor: "rgba(13, 255, 0, 0.93)" }}
+        style={{ backgroundColor: "rgba(12, 234, 0, 0.95)" }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
-          fontSize: 15,
+          fontSize: 17,
           fontWeight: "400",
+          color: "black",
+        }}
+        text2Style={{
+          fontSize: 15,
           color: "black",
         }}
       />
@@ -52,6 +56,7 @@ export default function RootLayout(): React.JSX.Element | null {
         style={{ backgroundColor: "rgba(255, 72, 0, 0.93)" }}
         text1Style={{
           fontSize: 17,
+          fontWeight: "400",
           color: "black",
         }}
         text2Style={{
@@ -82,8 +87,8 @@ export default function RootLayout(): React.JSX.Element | null {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen name="index" options={{ title: "Home" }} />
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
       <Toast config={toastConfig} />

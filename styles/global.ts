@@ -38,7 +38,6 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
     profileSection: {
       alignItems: "flex-start",
       paddingHorizontal: 24,
-      marginTop: "-10%",
       paddingBottom: 24,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
@@ -46,6 +45,7 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
     avatar: {
       width: 110,
       height: 110,
+      marginTop: -10,
       borderRadius: 60,
       marginBottom: 16,
     },
@@ -60,8 +60,7 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       marginTop: 4,
     },
     actionsSection: {
-      paddingTop: 190,
-      marginTop: 24,
+      marginTop: "70%",
       paddingHorizontal: 24,
     },
     actionButton: {
@@ -181,6 +180,7 @@ export const createActivateStyles = (colors: any, dark: boolean) => {
       paddingTop: Platform.OS === "android" ? 30 : 40,
       paddingBottom: 24,
     },
+    backButton: { paddingTop: 25, marginBottom: 15 },
     header: {
       paddingHorizontal: 24,
     },
@@ -200,8 +200,8 @@ export const createActivateStyles = (colors: any, dark: boolean) => {
     },
     input: {
       backgroundColor: dark
-        ? "rgba(255, 255, 255, 0.05)"
-        : "rgba(0, 0, 0, 0.05)",
+        ? "rgba(0, 179, 255, 0.19)"
+        : "rgba(218, 113, 113, 0.05)",
       borderRadius: 12,
       padding: 20,
       fontSize: 16,
@@ -377,6 +377,7 @@ export const createForgotStyles = (colors: any, dark: boolean) => {
       paddingTop: Platform.OS === "android" ? 30 : 40,
       paddingBottom: 24,
     },
+    backButton: { paddingTop: 25, marginBottom: 15 },
     header: {
       paddingHorizontal: 24,
     },
@@ -396,13 +397,13 @@ export const createForgotStyles = (colors: any, dark: boolean) => {
     },
     input: {
       backgroundColor: dark
-        ? "rgba(255, 255, 255, 0.05)"
-        : "rgba(0, 0, 0, 0.05)",
+        ? "rgba(0, 179, 255, 0.19)"
+        : "rgba(218, 113, 113, 0.05)",
       borderRadius: 12,
       padding: 20,
       fontSize: 16,
       color: colors.text,
-      marginBottom: 16,
+      marginBottom: 15,
       borderWidth: 0,
     },
 
