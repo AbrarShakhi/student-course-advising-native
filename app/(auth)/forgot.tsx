@@ -1,4 +1,10 @@
+import { createForgotStyles } from "@/styles/global";
+import { API_URL } from "@/utils/api";
+import { patch, post } from "@/utils/fetch";
+import showAlert from "@/utils/showAlert";
 import { useTheme } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -10,17 +16,10 @@ import {
   View,
 } from "react-native";
 
-import { createActivateStyles } from "@/styles/global";
-import { API_URL } from "@/utils/api";
-import { patch, post } from "@/utils/fetch";
-import showAlert from "@/utils/showAlert";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-
 const SEND_OTP_URL = `${API_URL}/send-otp?reason_id=2`;
-const ACTIVATE_URL = `${API_URL}/activate`;
+const ForgotURL = `${API_URL}/forgot-password`;
 
-export default function ActivateScreen() {
+export default function forgot() {
   const [studentId, setStudentId] = useState("");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +27,7 @@ export default function ActivateScreen() {
   const [otpSent, setOtpSent] = useState(false);
   const { colors, dark } = useTheme();
 
-  const styles = createActivateStyles(colors, dark);
+  const styles = createForgotStyles(colors, dark);
 
   const handleSendOtp = async () => {
     if (!studentId) {
@@ -52,19 +51,19 @@ export default function ActivateScreen() {
     }
   };
 
-  const handleActivate = async () => {
+  const handleReset = async () => {
     if (!studentId || !otp || !password) {
-      showAlert("Error", "Please fill all fields.");
+      showAlert("Info", "Please fill all fields.", "info");
       return;
     }
     setLoading(true);
     try {
-      await post(ACTIVATE_URL, {
+      await post(ForgotURL, {
         student_id: studentId,
         password,
         otp,
       });
-      showAlert("Success", "Account activated! You can now log in.", "success");
+      showAlert("Success", "Password Reset Successfully!", "success");
       setStudentId("");
       setOtp("");
       setPassword("");
@@ -83,7 +82,7 @@ export default function ActivateScreen() {
         style={{ flex: 1, justifyContent: "space-between" }}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Activate Account</Text>
+          <Text style={styles.title}>Reset Password</Text>
           <Text style={styles.subtitle}>
             Enter your student ID to receive an OTP
           </Text>
@@ -145,7 +144,7 @@ export default function ActivateScreen() {
                 />
                 <TouchableOpacity
                   style={[styles.button, loading && styles.buttonDisabled]}
-                  onPress={handleActivate}
+                  onPress={handleReset}
                   disabled={loading}
                   activeOpacity={0.8}
                 >
@@ -160,7 +159,7 @@ export default function ActivateScreen() {
                     style={styles.button}
                   >
                     <Text style={styles.buttonText}>
-                      {loading ? "Activating..." : "Submit"}
+                      {loading ? "Reseting..." : "Submit"}
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>

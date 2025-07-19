@@ -37,7 +37,7 @@ export default function RootLayout(): React.JSX.Element | null {
     success: (props: any) => (
       <BaseToast
         {...props}
-        style={{ backgroundColor: "rgba(0, 255, 0, 0.9)" }}
+        style={{ backgroundColor: "rgba(13, 255, 0, 0.93)" }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
           fontSize: 15,
@@ -49,7 +49,7 @@ export default function RootLayout(): React.JSX.Element | null {
     error: (props: any) => (
       <ErrorToast
         {...props}
-        style={{ backgroundColor: "rgba(255, 0, 0, 0.9)" }}
+        style={{ backgroundColor: "rgba(255, 72, 0, 0.93)" }}
         text1Style={{
           fontSize: 17,
           color: "black",
@@ -63,7 +63,7 @@ export default function RootLayout(): React.JSX.Element | null {
     info: (props: any) => (
       <BaseToast
         {...props}
-        style={{ backgroundColor: "rgba(130, 130, 130, 0.96)" }}
+        style={{ backgroundColor: "rgba(170, 174, 164, 0.96)" }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
           fontSize: 17,

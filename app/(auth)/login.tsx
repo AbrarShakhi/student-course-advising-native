@@ -29,6 +29,11 @@ export default function LoginScreen() {
   const styles = createLoginStyles(colors, dark);
 
   const handleLogin = async () => {
+    if (!studentId || !password) {
+      showAlert("Info", "Please fill all fields.", "info");
+      return;
+    }
+
     setLoading(true);
     try {
       await post(LOGIN_URL, {
@@ -40,7 +45,6 @@ export default function LoginScreen() {
       router.replace("/");
     } catch (error: any) {
       showAlert("Error", "Invalid student ID or password.", "error");
-      console.error("Login error: ", error);
     } finally {
       setLoading(false);
     }
@@ -78,7 +82,7 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={styles.forgotPasswordButton}
             onPress={() => {
-              /* Handle forgot password */
+              router.push("/(auth)/forgot");
             }}
           >
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>

@@ -37,8 +37,8 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
     },
     profileSection: {
       alignItems: "flex-start",
-      marginTop: "-52%",
       paddingHorizontal: 24,
+      marginTop: "-10%",
       paddingBottom: 24,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
@@ -60,7 +60,7 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       marginTop: 4,
     },
     actionsSection: {
-      paddingTop: 24,
+      paddingTop: 190,
       marginTop: 24,
       paddingHorizontal: 24,
     },
@@ -366,4 +366,95 @@ export const createLoginStyles = (colors: any, dark: boolean) => {
 
   return baseStyles;
 };
-("");
+
+export const createForgotStyles = (colors: any, dark: boolean) => {
+  //For mobile
+  const baseStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      justifyContent: "space-between",
+      paddingTop: Platform.OS === "android" ? 30 : 40,
+      paddingBottom: 24,
+    },
+    header: {
+      paddingHorizontal: 24,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: "bold",
+      color: colors.text,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: colors.text + "AA",
+    },
+    formContainer: {
+      paddingHorizontal: 24,
+      paddingBottom: 24,
+    },
+    input: {
+      backgroundColor: dark
+        ? "rgba(255, 255, 255, 0.05)"
+        : "rgba(0, 0, 0, 0.05)",
+      borderRadius: 12,
+      padding: 20,
+      fontSize: 16,
+      color: colors.text,
+      marginBottom: 16,
+      borderWidth: 0,
+    },
+
+    button: {
+      borderRadius: 12,
+      padding: 20,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 2,
+      fontSize: 16,
+    },
+    buttonDisabled: {
+      backgroundColor: dark ? "#6B7280" : "#9CA3AF",
+    },
+    buttonText: {
+      color: "#FFFFFF",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+  });
+
+  //For web
+  if (Platform.OS === "web") {
+    return StyleSheet.create({
+      ...baseStyles,
+      container: {
+        ...baseStyles.container,
+        paddingTop: 40,
+        justifyContent: "center",
+      },
+
+      formContainer: {
+        ...baseStyles.formContainer,
+        maxWidth: 480,
+        width: "100%",
+        alignSelf: "center",
+        borderRadius: 16,
+        padding: 40,
+      },
+
+      title: {
+        ...baseStyles.title,
+        textAlign: "center",
+      },
+
+      subtitle: {
+        ...baseStyles.subtitle,
+        textAlign: "center",
+      },
+    });
+  }
+
+  return baseStyles;
+};
