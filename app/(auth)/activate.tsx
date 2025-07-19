@@ -32,7 +32,7 @@ export default function ActivateScreen() {
 
   const handleSendOtp = async () => {
     if (!studentId) {
-      showAlert("Error", "Please enter your student ID.");
+      showAlert("Error", "Please enter your student ID.", "error");
       return;
     }
     setLoading(true);
@@ -64,7 +64,7 @@ export default function ActivateScreen() {
         password,
         otp,
       });
-      showAlert("Success", "Account activated! You can now log in.");
+      showAlert("Success", "Account activated! You can now log in.", "success");
       setStudentId("");
       setOtp("");
       setPassword("");

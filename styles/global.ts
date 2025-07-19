@@ -28,6 +28,96 @@ const AppColors = {
   },
 };
 
+export const createAccountScreenStyles = (colors: any, dark: boolean) => {
+  const baseStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingTop: Platform.OS === "android" ? 40 : 50,
+    },
+    profileSection: {
+      alignItems: "flex-start",
+      marginTop: "-52%",
+      paddingHorizontal: 24,
+      paddingBottom: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    avatar: {
+      width: 110,
+      height: 110,
+      borderRadius: 60,
+      marginBottom: 16,
+    },
+    name: {
+      fontSize: 23,
+      fontWeight: "bold",
+      color: colors.text,
+    },
+    studentId: {
+      fontSize: 16,
+      color: colors.text + "AA",
+      marginTop: 4,
+    },
+    actionsSection: {
+      paddingTop: 24,
+      marginTop: 24,
+      paddingHorizontal: 24,
+    },
+    actionButton: {
+      backgroundColor: dark
+        ? "rgba(255, 255, 255, 0.05)"
+        : "rgba(0, 0, 0, 0.05)",
+      borderRadius: 12,
+      padding: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 16,
+    },
+    actionButtonText: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    logoutButton: {
+      backgroundColor: dark
+        ? "rgba(255, 82, 82, 0.1)"
+        : "rgba(255, 82, 82, 0.1)",
+    },
+    logoutButtonText: {
+      color: "#FF5252",
+      fontWeight: "bold",
+    },
+  });
+
+  if (Platform.OS === "web") {
+    return StyleSheet.create({
+      ...baseStyles,
+      container: {
+        ...baseStyles.container,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      profileSection: {
+        ...baseStyles.profileSection,
+        maxWidth: 480,
+        width: "100%",
+        alignSelf: "center",
+        borderBottomWidth: 0,
+        paddingBottom: 0,
+      },
+      actionsSection: {
+        ...baseStyles.actionsSection,
+        maxWidth: 480,
+        width: "100%",
+        alignSelf: "center",
+      },
+    });
+  }
+
+  return baseStyles;
+};
+
 export const createAppLayoutStyles = (
   colors: typeof AppColors.light,
   dark: boolean
@@ -276,3 +366,4 @@ export const createLoginStyles = (colors: any, dark: boolean) => {
 
   return baseStyles;
 };
+("");

@@ -39,7 +39,7 @@ export default function LoginScreen() {
       await AsyncStorage.setItem("student_id", studentId);
       router.replace("/");
     } catch (error: any) {
-      showAlert("Error", "Could not connect to server", "error");
+      showAlert("Error", "Invalid student ID or password.", "error");
       console.error("Login error: ", error);
     } finally {
       setLoading(false);
