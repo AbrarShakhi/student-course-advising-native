@@ -12,10 +12,15 @@ export async function post<T>(url: string, data: any): Promise<T> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+
+  const responseData = await response.json();
+
   if (!response.ok) {
-    throw new Error(`POST ${url} failed: ${response.statusText}`);
+    const errorMessage =
+      (responseData && responseData.message) || response.statusText;
+    throw new Error(`POST ${url} failed: ${errorMessage}`);
   }
-  return response.json();
+  return responseData as T;
 }
 
 export async function patch<T>(url: string, data: any): Promise<T> {

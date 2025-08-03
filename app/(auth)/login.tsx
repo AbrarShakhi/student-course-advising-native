@@ -36,12 +36,24 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      await post(LOGIN_URL, {
+      // Debug log before API call
+      console.log("Attempting login with:", { studentId, password });
+
+      const response = await post<{ access_token: string }>(LOGIN_URL, {
         student_id: studentId,
         password: password,
       });
 
-      await AsyncStorage.setItem("student_id", studentId);
+      // Store token and student ID
+      await Promise.all([
+        AsyncStorage.setItem("access_token", response.access_token),
+        AsyncStorage.setItem("student_id", studentId),
+      ]);
+
+      // Verify storage
+      const storedToken = await AsyncStorage.getItem("access_token");
+
+      // Navigate to home
       router.replace("/");
     } catch (error: any) {
       showAlert("Error", "Invalid student ID or password.", "error");

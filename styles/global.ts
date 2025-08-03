@@ -459,3 +459,162 @@ export const createForgotStyles = (colors: any, dark: boolean) => {
 
   return baseStyles;
 };
+
+export const createHomeStyles = (colors: any, dark: boolean) => {
+  const baseStyles = StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    // Centered container for loading, error, and empty states
+    centered: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.background,
+      padding: 24,
+    },
+    headerTitle: {
+      fontSize: 32,
+      fontWeight: "bold",
+      color: colors.text,
+      marginTop: 20,
+    },
+    headerSubtitle: {
+      fontSize: 16,
+      color: colors.text + "AA",
+      marginBottom: 24,
+    },
+    dayContainer: {
+      marginBottom: 24,
+    },
+    dayHeader: {
+      fontSize: 20,
+      fontWeight: "600",
+      color: colors.primary,
+      marginBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      paddingBottom: 8,
+    },
+    classCard: {
+      backgroundColor: dark ? "#1C1C1E" : "#FFFFFF",
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: dark ? 0.2 : 0.08,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    classCardHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    courseId: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: colors.text,
+    },
+    facultyId: {
+      fontSize: 14,
+      color: colors.text,
+      backgroundColor: colors.border,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 6,
+      overflow: "hidden", // Ensures background respects border radius
+    },
+    classCardBody: {
+      paddingTop: 8,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    infoRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 8,
+    },
+    icon: {
+      marginRight: 8,
+      opacity: 0.8,
+    },
+    infoText: {
+      fontSize: 14,
+      color: colors.text,
+      opacity: 0.9,
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: colors.text,
+    },
+    errorText: {
+      marginTop: 16,
+      color: colors.notification || "#FF5252", // Fallback color
+      textAlign: "center",
+      fontSize: 16,
+    },
+    emptyText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: colors.text,
+      opacity: 0.7,
+      textAlign: "center",
+    },
+  });
+
+  // --- Web-Specific Overrides ---
+  if (Platform.OS === "web") {
+    return StyleSheet.create({
+      ...baseStyles,
+      // On web, the safeArea centers the content card
+      safeArea: {
+        flex: 1,
+        backgroundColor: dark ? "#000" : "#EFEFEF",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      },
+      // This is the "mobile screen" container for the web
+      container: {
+        backgroundColor: colors.background,
+        flex: 1,
+        width: "100%",
+        maxWidth: 450,
+        height: "100%",
+        maxHeight: 812,
+        borderRadius: 24,
+        boxShadow: "0 15px 30px rgba(0, 0, 0, 0.2)",
+        overflow: "hidden",
+      },
+      // The centered container needs to be contained within the web view
+      centered: {
+        ...baseStyles.centered,
+        maxWidth: 450,
+        height: "100%",
+        maxHeight: 812,
+        borderRadius: 24,
+      },
+      // Adjust padding for the header inside the web card
+      headerTitle: {
+        ...baseStyles.headerTitle,
+        paddingHorizontal: 16,
+      },
+      headerSubtitle: {
+        ...baseStyles.headerSubtitle,
+        paddingHorizontal: 16,
+      },
+    });
+  }
+
+  // Return base styles for mobile
+  return baseStyles;
+};
