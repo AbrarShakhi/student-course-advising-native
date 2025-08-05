@@ -461,14 +461,20 @@ export const createForgotStyles = (colors: any, dark: boolean) => {
 };
 
 export const createHomeStyles = (colors: any, dark: boolean) => {
+  // --- Base Styles (for mobile: iOS/Android) ---
   const baseStyles = StyleSheet.create({
     safeArea: {
       flex: 1,
       backgroundColor: colors.background,
     },
+    // This container holds the ScrollView
     container: {
       flex: 1,
-      paddingHorizontal: 16,
+    },
+    // This view is inside the ScrollView and provides padding
+    contentContainer: {
+      paddingHorizontal: 20,
+      paddingBottom: 40,
     },
     // Centered container for loading, error, and empty states
     centered: {
@@ -478,39 +484,60 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       backgroundColor: colors.background,
       padding: 24,
     },
+    header: {
+      paddingTop: Platform.OS === "android" ? 30 : 20,
+      marginBottom: 16,
+    },
     headerTitle: {
-      fontSize: 32,
+      fontSize: 34,
       fontWeight: "bold",
       color: colors.text,
-      marginTop: 20,
     },
-    headerSubtitle: {
-      fontSize: 16,
-      color: colors.text + "AA",
+    // --- Styles for the Semester Pickers ---
+    pickerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
       marginBottom: 24,
+      marginHorizontal: -4, // Counteract the wrapper margin
+    },
+    pickerWrapper: {
+      flex: 1,
+      backgroundColor: dark ? "#1E1E1E" : "#FFFFFF",
+      borderRadius: 12,
+      marginHorizontal: 4, // Space between pickers
+    },
+    picker: {
+      color: colors.text,
+      height: 50,
+    },
+    // Style for the centered messages (loading, error, empty)
+    centeredMessage: {
+      marginTop: 60,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 20,
     },
     dayContainer: {
       marginBottom: 24,
     },
     dayHeader: {
-      fontSize: 20,
-      fontWeight: "600",
-      color: colors.primary,
-      marginBottom: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      paddingBottom: 8,
+      fontSize: 22,
+      fontWeight: "700",
+      color: colors.text,
+      marginBottom: 16,
     },
     classCard: {
-      backgroundColor: dark ? "#1C1C1E" : "#FFFFFF",
-      borderRadius: 12,
+      backgroundColor: dark ? "#1E1E1E" : "#FFFFFF",
+      borderRadius: 14,
       padding: 16,
       marginBottom: 12,
+      borderLeftWidth: 5,
+      borderLeftColor: colors.primary,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: dark ? 0.2 : 0.08,
-      shadowRadius: 4,
-      elevation: 3,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: dark ? 0.25 : 0.08,
+      shadowRadius: 8,
+      elevation: 5,
     },
     classCardHeader: {
       flexDirection: "row",
@@ -525,29 +552,30 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
     },
     facultyId: {
       fontSize: 14,
+      fontWeight: "500",
       color: colors.text,
       backgroundColor: colors.border,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      overflow: "hidden", // Ensures background respects border radius
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 8,
+      overflow: "hidden",
     },
     classCardBody: {
-      paddingTop: 8,
+      paddingTop: 12,
       borderTopWidth: 1,
       borderTopColor: colors.border,
     },
     infoRow: {
       flexDirection: "row",
       alignItems: "center",
-      marginTop: 8,
+      marginTop: 10,
     },
     icon: {
-      marginRight: 8,
+      marginRight: 10,
       opacity: 0.8,
     },
     infoText: {
-      fontSize: 14,
+      fontSize: 15,
       color: colors.text,
       opacity: 0.9,
     },
@@ -558,9 +586,10 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
     },
     errorText: {
       marginTop: 16,
-      color: colors.notification || "#FF5252", // Fallback color
+      color: colors.notification || "#FF5252",
       textAlign: "center",
       fontSize: 16,
+      lineHeight: 24,
     },
     emptyText: {
       marginTop: 16,
@@ -569,22 +598,33 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       opacity: 0.7,
       textAlign: "center",
     },
+    webContentWrapper: {
+      backgroundColor: colors.background,
+      flex: 1,
+      width: "100%",
+      maxWidth: 450,
+      height: "100%",
+      maxHeight: 812,
+      borderRadius: 24,
+      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
+      overflow: "hidden",
+    },
   });
 
   // --- Web-Specific Overrides ---
   if (Platform.OS === "web") {
     return StyleSheet.create({
       ...baseStyles,
-      // On web, the safeArea centers the content card
+      // On web, the safeArea becomes the main background that centers the content card
       safeArea: {
         flex: 1,
-        backgroundColor: dark ? "#000" : "#EFEFEF",
+        backgroundColor: dark ? "#0a0a0a" : "#f0f2f5",
         justifyContent: "center",
         alignItems: "center",
         padding: 20,
       },
-      // This is the "mobile screen" container for the web
-      container: {
+      // This new style is the "mobile screen" card that holds all content
+      webContentWrapper: {
         backgroundColor: colors.background,
         flex: 1,
         width: "100%",
@@ -592,25 +632,17 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
         height: "100%",
         maxHeight: 812,
         borderRadius: 24,
-        boxShadow: "0 15px 30px rgba(0, 0, 0, 0.2)",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
         overflow: "hidden",
       },
-      // The centered container needs to be contained within the web view
+      // The centered container must also be constrained within the web wrapper
       centered: {
         ...baseStyles.centered,
-        maxWidth: 450,
         height: "100%",
-        maxHeight: 812,
-        borderRadius: 24,
       },
-      // Adjust padding for the header inside the web card
-      headerTitle: {
-        ...baseStyles.headerTitle,
-        paddingHorizontal: 16,
-      },
-      headerSubtitle: {
-        ...baseStyles.headerSubtitle,
-        paddingHorizontal: 16,
+      // We don't need the outer container on web, the wrapper handles it
+      container: {
+        flex: 1,
       },
     });
   }

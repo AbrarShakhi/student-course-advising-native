@@ -2,7 +2,6 @@ import { createLoginStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -36,27 +35,31 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      // Debug log before API call
-      console.log("Attempting login with:", { studentId, password });
-
       const response = await post<{ access_token: string }>(LOGIN_URL, {
         student_id: studentId,
         password: password,
       });
 
-      // Store token and student ID
-      await Promise.all([
-        AsyncStorage.setItem("access_token", response.access_token),
-        AsyncStorage.setItem("student_id", studentId),
-      ]);
-
-      // Verify storage
-      const storedToken = await AsyncStorage.getItem("access_token");
-
-      // Navigate to home
-      router.replace("/");
+      // Navigate to the home screen and pass the token and student ID
+      // directly as parameters. This ensures the home screen receives them immediately.
+      router.replace({
+        pathname: "/",
+        params: {
+          accessToken: response.access_token,
+          studentId: studentId,
+        },
+      });
     } catch (error: any) {
-      showAlert("Error", "Invalid student ID or password.", "error");
+      // Catch specific 401/403 errors and display a helpful message
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        showAlert("Error", "Invalid student ID or password.", "error");
+      } else {
+        showAlert(
+          "Error",
+          "An unexpected error occurred. Please try again.",
+          "error"
+        );
+      }
     } finally {
       setLoading(false);
     }
