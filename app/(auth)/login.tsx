@@ -2,6 +2,7 @@ import { createLoginStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -40,26 +41,16 @@ export default function LoginScreen() {
         password: password,
       });
 
-      // Navigate to the home screen and pass the token and student ID
-      // directly as parameters. This ensures the home screen receives them immediately.
-      router.replace({
-        pathname: "/",
-        params: {
-          accessToken: response.access_token,
-          studentId: studentId,
-        },
-      });
+      // Store token and student ID
+      await Promise.all([
+        AsyncStorage.setItem("access_token", response.access_token),
+        AsyncStorage.setItem("student_id", studentId),
+      ]);
+
+      // Navigate to home
+      router.replace("/");
     } catch (error: any) {
-      // Catch specific 401/403 errors and display a helpful message
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
-        showAlert("Error", "Invalid student ID or password.", "error");
-      } else {
-        showAlert(
-          "Error",
-          "An unexpected error occurred. Please try again.",
-          "error"
-        );
-      }
+      showAlert("Error", "Invalid student ID or password.", "error");
     } finally {
       setLoading(false);
     }
