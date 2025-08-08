@@ -498,7 +498,9 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       flexDirection: "row",
       justifyContent: "space-between",
       marginBottom: 24,
-      marginHorizontal: -4, // Counteract the wrapper margin
+      marginHorizontal: 5, // Counteract the wrapper margin
+      borderRadius: 12,
+      overflow: "hidden",
     },
     pickerWrapper: {
       flex: 1,
@@ -507,7 +509,7 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       marginHorizontal: 4, // Space between pickers
     },
     picker: {
-      color: colors.text,
+      color: "#1E1E1E",
       height: 50,
     },
     // Style for the centered messages (loading, error, empty)

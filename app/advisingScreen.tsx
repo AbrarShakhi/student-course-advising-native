@@ -1,7 +1,7 @@
 import React from "react";
 
-const advisingScreen = () => {
+const AdvisingScreen = () => {
   return <div>advisingScreen</div>;
 };
 
-export default advisingScreen;
+export default AdvisingScreen;

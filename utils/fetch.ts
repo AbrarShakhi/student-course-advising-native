@@ -1,9 +1,12 @@
 export async function get<T>(url: string): Promise<T> {
   const response = await fetch(url);
+  const data = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(`GET ${url} failed: ${response.statusText}`);
+    throw new Error(
+      `GET ${url} failed: ${data && data.message}|| ${response.statusText}`
+    );
   }
-  return response.json();
+  return data as T;
 }
 
 export async function post<T>(url: string, data: any): Promise<T> {

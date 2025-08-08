@@ -15,6 +15,7 @@ import {
 
 import { createHomeStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
+import { get } from "@/utils/fetch";
 
 // --- Type Definitions ---
 type ScheduleItem = {
@@ -37,68 +38,77 @@ type GroupedSchedule = {
   [key: string]: ScheduleItem[];
 };
 
-const getAuthToken = async (): Promise<string | null> => {
-  return await AsyncStorage.getItem("access_token");
+// --- Helper Functions ---
+const getStudentId = async (): Promise<string | null> => {
+  return await AsyncStorage.getItem("student_id");
 };
 
+// --- Main Component ---
 export default function HomeScreen() {
   const { colors, dark } = useTheme();
   const styles = createHomeStyles(colors, dark);
-  // Separate style object for picker text color to avoid type conflicts
   const pickerStyles = StyleSheet.create({
     pickerItem: { color: colors.text },
   });
 
   // --- State Management ---
-  const [loading, setLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [studentId, setStudentId] = useState<string | null>(null);
 
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [availableSeasons, setAvailableSeasons] = useState<
     { id: number; name: string }[]
   >([]);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>();
+  const [selectedSeason, setSelectedSeason] = useState<number>();
 
+  // --- Data Fetching Effects ---
   useFocusEffect(
     useCallback(() => {
       const fetchInitialData = async () => {
-        setLoading(true);
+        setIsInitialLoading(true);
         setError(null);
         try {
-          const semestersResponse = await fetch(`${API_URL}/list-semesters`);
-          if (!semestersResponse.ok)
-            throw new Error("Could not load semester list.");
-          const semestersData: { semesters: SemesterInfo[] } =
-            await semestersResponse.json();
+          const id = await getStudentId();
+          if (!id)
+            throw new Error("Student ID not found. Please log in again.");
+          setStudentId(id);
 
-          // --- FIX: Add explicit types to fix inference errors ---
+          const semestersData = await get<{ semesters: SemesterInfo[] }>(
+            `${API_URL}/list-semesters`
+          );
+
+          if (
+            !semestersData.semesters ||
+            semestersData.semesters.length === 0
+          ) {
+            throw new Error("No semester data could be found.");
+          }
+
           const years = [
-            ...new Set(
-              semestersData.semesters.map((s: SemesterInfo) => s.year)
-            ),
-          ];
-          years.sort((a: number, b: number) => b - a);
-
+            ...new Set(semestersData.semesters.map((s) => s.year)),
+          ].sort((a, b) => b - a);
           const seasonMap = new Map<number, { id: number; name: string }>();
-          semestersData.semesters.forEach((s: SemesterInfo) =>
+          semestersData.semesters.forEach((s) =>
             seasonMap.set(s.season_id, { id: s.season_id, name: s.season_name })
           );
 
           setAvailableYears(years);
           setAvailableSeasons(Array.from(seasonMap.values()));
 
-          const uniInfoResponse = await fetch(`${API_URL}/university-info`);
-          if (!uniInfoResponse.ok)
-            throw new Error("Could not load university info.");
-          const uniInfo = await uniInfoResponse.json();
+          const latestSemester = [...semestersData.semesters].sort(
+            (a, b) => b.year - a.year || b.season_id - a.season_id
+          )[0];
 
-          setSelectedYear(uniInfo.curr_year);
-          setSelectedSeason(uniInfo.curr_season);
+          setSelectedYear(latestSemester.year);
+          setSelectedSeason(latestSemester.season_id);
         } catch (e: any) {
           setError(e.message);
-          setLoading(false);
+        } finally {
+          setIsInitialLoading(false);
         }
       };
       fetchInitialData();
@@ -106,42 +116,50 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
+    if (isInitialLoading) return;
+
     const fetchSchedule = async () => {
-      if (!selectedYear || !selectedSeason) return;
-      setLoading(true);
+      if (!selectedYear || !selectedSeason || !studentId) return;
+
+      setScheduleLoading(true);
       setError(null);
+      setSchedule([]);
+
       try {
-        const token = await getAuthToken();
-        if (!token) throw new Error("Authentication token not found.");
-
-        const url = `${API_URL}/class-schedule?year=${selectedYear}&season_id=${selectedSeason}`;
-        const response = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch schedule.");
-        }
-
-        const data = await response.json();
+        const url = `${API_URL}/class-schedule?student_id=${studentId}&year=${selectedYear}&season_id=${selectedSeason}`;
+        const data = await get<{ schedule: ScheduleItem[] }>(url);
         setSchedule(data.schedule || []);
       } catch (e: any) {
         setError(e.message);
+        setSchedule([]);
       } finally {
-        setLoading(false);
+        setScheduleLoading(false);
       }
     };
-
     fetchSchedule();
-  }, [selectedYear, selectedSeason]);
+  }, [selectedYear, selectedSeason, studentId, isInitialLoading]);
 
+  // --- Data Memoization ---
   const groupedSchedule = useMemo<GroupedSchedule>(() => {
-    if (!schedule) return {};
+    // **THE FIX IS HERE**
+    // This map translates abbreviated day names from the API to full names.
+    const dayMap: { [key: string]: string } = {
+      Sat: "Saturday",
+      Sun: "Sunday",
+      Mon: "Monday",
+      Tue: "Tuesday",
+      Wed: "Wednesday",
+      Thu: "Thursday",
+      Fri: "Friday",
+    };
+
     return schedule.reduce((acc, item) => {
-      const day = item.day;
-      if (!acc[day]) acc[day] = [];
-      acc[day].push(item);
+      // Use the map to get the full day name, or default to "Unscheduled".
+      const fullDay = dayMap[item.day] || "Unscheduled";
+      if (!acc[fullDay]) {
+        acc[fullDay] = [];
+      }
+      acc[fullDay].push(item);
       return acc;
     }, {} as GroupedSchedule);
   }, [schedule]);
@@ -157,12 +175,12 @@ export default function HomeScreen() {
   ];
   const scheduleDays = orderedDays.filter((day) => groupedSchedule[day]);
 
-  const renderContent = () => (
+  // --- Render Logic ---
+  const renderScheduleContent = () => (
     <ScrollView style={styles.contentContainer}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Class Routine</Text>
       </View>
-
       <View style={styles.pickerRow}>
         <View style={styles.pickerWrapper}>
           <Picker
@@ -170,6 +188,7 @@ export default function HomeScreen() {
             onValueChange={(itemValue) => setSelectedYear(itemValue)}
             style={styles.picker}
             itemStyle={pickerStyles.pickerItem}
+            enabled={availableYears.length > 0}
           >
             {availableYears.map((year) => (
               <Picker.Item key={year} label={String(year)} value={year} />
@@ -182,6 +201,7 @@ export default function HomeScreen() {
             onValueChange={(itemValue) => setSelectedSeason(itemValue)}
             style={styles.picker}
             itemStyle={pickerStyles.pickerItem}
+            enabled={availableSeasons.length > 0}
           >
             {availableSeasons.map((season) => (
               <Picker.Item
@@ -194,19 +214,10 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {loading ? (
+      {scheduleLoading ? (
         <View style={styles.centeredMessage}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Loading Schedule...</Text>
-        </View>
-      ) : error ? (
-        <View style={styles.centeredMessage}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={colors.notification}
-          />
-          <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : schedule.length === 0 ? (
         <View style={styles.centeredMessage}>
@@ -268,11 +279,29 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {Platform.OS === "web" ? (
-        <View style={styles.webContentWrapper}>{renderContent()}</View>
-      ) : (
-        renderContent()
-      )}
+      <View
+        style={
+          Platform.OS === "web" ? styles.webContentWrapper : styles.container
+        }
+      >
+        {isInitialLoading ? (
+          <View style={styles.centeredMessage}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Loading...</Text>
+          </View>
+        ) : error ? (
+          <View style={styles.centeredMessage}>
+            <Ionicons
+              name="alert-circle-outline"
+              size={48}
+              color={colors.notification}
+            />
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : (
+          renderScheduleContent()
+        )}
+      </View>
     </SafeAreaView>
   );
 }

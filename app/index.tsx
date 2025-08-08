@@ -4,9 +4,8 @@ import { useTheme } from "@react-navigation/native";
 import React from "react";
 
 import { createAppLayoutStyles } from "@/styles/global";
-
 import accountScreen from "./accountScreen";
-import advisingScreen from "./advisingScreen";
+import AdvisingScreen from "./advisingScreen";
 import homeScreen from "./homeScreen";
 
 const Tab = createBottomTabNavigator();
@@ -41,7 +40,7 @@ export default function AppLayout() {
       })}
     >
       <Tab.Screen name="Home" component={homeScreen} />
-      <Tab.Screen name="Advising" component={advisingScreen} />
+      <Tab.Screen name="Advising" component={AdvisingScreen} />
       <Tab.Screen name="Account" component={accountScreen} />
     </Tab.Navigator>
   );

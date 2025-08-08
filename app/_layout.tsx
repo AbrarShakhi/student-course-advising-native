@@ -21,8 +21,17 @@ export default function RootLayout(): React.JSX.Element | null {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const studentId = await AsyncStorage.getItem("student_id");
-      if (studentId === null) {
+      try {
+        // Check if user is logged in
+        AsyncStorage.getItem("access_token").then((token) => {
+          if (!token) {
+            router.replace("/(auth)/login");
+          } else {
+            router.replace("/");
+          }
+        });
+      } catch (error) {
+        console.error("Error checking login status:", error);
         router.replace("/(auth)/login");
       }
     };
