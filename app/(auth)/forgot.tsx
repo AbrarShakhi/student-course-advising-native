@@ -37,9 +37,13 @@ export default function forgot() {
     }
     setLoading(true);
     try {
-      await patch(SEND_OTP_URL, {
-        student_id: studentId,
-      });
+      await patch(
+        SEND_OTP_URL,
+        {
+          student_id: studentId,
+        },
+        null
+      );
 
       setOtpSent(true);
       showAlert("Info", "Check your email for the OTP.");
