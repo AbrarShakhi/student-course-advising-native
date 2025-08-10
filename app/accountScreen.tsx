@@ -20,23 +20,6 @@ export default function AccountScreen() {
   const router = useRouter();
   const [userData, setUserData] = useState<any>(null);
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const studentId = await AsyncStorage.getItem("student_id");
-  //       if (studentId) {
-  //         const data = await get(`${USER_URL}/${studentId}`);
-  //         setUserData(data);
-  //       }
-  //     } catch (error: any) {
-  //       showAlert("Failed to fetch user data.", "error");
-  //       console.error("Fetch user data error: ", error);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, []);
-
   const handleLogout = async () => {
     await AsyncStorage.removeItem("student_id");
     router.replace("/(auth)/login");
@@ -45,10 +28,6 @@ export default function AccountScreen() {
   const handleChangePassword = () => {
     router.push("/(auth)/changePassword");
   };
-
-  // if (!userData) {
-  //   return null;
-  // }
 
   return (
     <SafeAreaView style={styles.container}>

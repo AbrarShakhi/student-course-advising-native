@@ -33,7 +33,7 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
     container: {
       flex: 1,
       backgroundColor: colors.background,
-      paddingTop: Platform.OS === "android" ? 40 : 50,
+      paddingTop: Platform.OS === "android" ? 80 : 50,
     },
     profileSection: {
       alignItems: "flex-start",
@@ -53,19 +53,22 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       fontSize: 23,
       fontWeight: "bold",
       color: colors.text,
+      marginLeft: 10,
     },
     studentId: {
       fontSize: 16,
       color: colors.text + "AA",
       marginTop: 4,
+      marginLeft: 10,
     },
     actionsSection: {
       marginTop: "70%",
       paddingHorizontal: 24,
+      marginBottom: 10,
     },
     actionButton: {
       backgroundColor: dark
-        ? "rgba(255, 255, 255, 0.05)"
+        ? "rgba(150, 149, 149, 0.43)"
         : "rgba(0, 0, 0, 0.05)",
       borderRadius: 12,
       padding: 20,
@@ -80,7 +83,7 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
     },
     logoutButton: {
       backgroundColor: dark
-        ? "rgba(255, 82, 82, 0.1)"
+        ? "rgba(255, 82, 82, 0.35)"
         : "rgba(255, 82, 82, 0.1)",
     },
     logoutButtonText: {
@@ -147,6 +150,7 @@ export const createAppLayoutStyles = (
       shadowRadius: 10,
       height: Platform.OS === "ios" ? 90 : 60, // Adjust height for iOS notch
       paddingBottom: Platform.OS === "ios" ? 30 : 0, // Padding for iOS safe area
+      marginBottom: Platform.OS === "android" ? 32 : 0, // Margin for iOS safe area
     },
     // Styles for individual tab bar items
     tabBarLabelStyle: {
@@ -485,7 +489,7 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       padding: 24,
     },
     header: {
-      paddingTop: Platform.OS === "android" ? 30 : 20,
+      paddingTop: Platform.OS === "android" ? 55 : 20,
       marginBottom: 16,
     },
     headerTitle: {
@@ -504,9 +508,9 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
     },
     pickerWrapper: {
       flex: 1,
-      backgroundColor: dark ? "#1E1E1E" : "#FFFFFF",
+      backgroundColor: dark ? "#ccccccff" : "#FFFFFF",
       borderRadius: 12,
-      marginHorizontal: 4, // Space between pickers
+      marginHorizontal: 6, // Space between pickers
     },
     picker: {
       color: "#1E1E1E",
@@ -529,7 +533,7 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       marginBottom: 16,
     },
     classCard: {
-      backgroundColor: dark ? "#1E1E1E" : "#FFFFFF",
+      backgroundColor: dark ? "#403d3dff" : "#FFFFFF",
       borderRadius: 14,
       padding: 16,
       marginBottom: 12,
@@ -674,7 +678,7 @@ export const createChangePasswordStyles = (colors: any, dark: boolean) => {
     },
     backButton: {
       position: "absolute",
-      top: Platform.OS === "android" ? 25 : 0,
+      top: Platform.OS === "android" ? 30 : 0,
       left: 24,
       zIndex: 1,
       padding: 5,
@@ -685,7 +689,7 @@ export const createChangePasswordStyles = (colors: any, dark: boolean) => {
       color: colors.text,
       marginBottom: 8,
       textAlign: "center",
-      marginTop: 40,
+      marginTop: "20%",
     },
     subtitle: {
       fontSize: 16,
@@ -697,7 +701,7 @@ export const createChangePasswordStyles = (colors: any, dark: boolean) => {
       paddingHorizontal: 24,
     },
     input: {
-      backgroundColor: dark ? "rgba(255, 255, 255, 0.1)" : "#F3F4F6",
+      backgroundColor: dark ? "rgba(255, 255, 255, 0.2)" : "#F3F4F6",
       borderRadius: 12,
       padding: 18,
       fontSize: 16,
@@ -707,7 +711,8 @@ export const createChangePasswordStyles = (colors: any, dark: boolean) => {
       borderColor: colors.border,
     },
     button: {
-      backgroundColor: colors.primary,
+      borderColor: "rgba(179, 235, 255, 0.7)",
+      borderWidth: 2,
       borderRadius: 12,
       padding: 18,
       width: "100%",

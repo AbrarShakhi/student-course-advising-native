@@ -1,8 +1,8 @@
 /*
 YOUR IP MIGHT BE DIFFERENT
 */
-let ip = "localhost";
-// ip = " http://10.60.205.127"
+//let ip = "localhost";
+let ip = "192.168.0.104";
 let port = "5000";
 export const URL = `http://${ip}:${port}`;
 
