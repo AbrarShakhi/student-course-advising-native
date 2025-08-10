@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+// Import Stack for header options
+import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,53 +13,51 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 
-import { createForgotStyles } from "@/styles/global"; // Assuming this is your style factory
+import { createChangePasswordStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { patch } from "@/utils/fetch";
+import showAlert from "@/utils/showAlert";
 
-export default function changePassword() {
+const getAuthToken = async (): Promise<string | null> => {
+  return await AsyncStorage.getItem("access_token");
+};
+
+export default function ChangePasswordScreen() {
   const { colors, dark } = useTheme();
-  const styles = createForgotStyles(colors, dark);
+  const styles = createChangePasswordStyles(colors, dark);
   const router = useRouter();
 
-  // --- State Management ---
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Handles the password change process.
-   */
   const handlePasswordChange = async () => {
-    // --- 1. Client-Side Validation ---
     if (!oldPassword || !newPassword || !confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "Missing Fields",
-        text2: "Please fill in all fields.",
-      });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "Passwords Mismatch",
-        text2: "Your new passwords do not match.",
-      });
+      showAlert(
+        "Missing Fields",
+        "Please fill in all password fields.",
+        "error"
+      );
       return;
     }
     if (newPassword.length < 8) {
-      Toast.show({
-        type: "error",
-        text1: "Password Too Short",
-        text2: "New password must be at least 8 characters.",
-      });
+      showAlert(
+        "Password Too Short",
+        "The new password must be at least 8 characters long.",
+        "error"
+      );
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showAlert(
+        "Passwords Do Not Match",
+        "Please re-enter your new password.",
+        "error"
+      );
       return;
     }
 
@@ -66,116 +65,114 @@ export default function changePassword() {
     setIsLoading(true);
 
     try {
-      // --- 2. Get Auth Token ---
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await getAuthToken();
       if (!token) {
-        Toast.show({
-          type: "error",
-          text1: "Authentication Error",
-          text2: "Please log in again.",
-        });
+        showAlert(
+          "Authentication Error",
+          "You are not logged in. Please log in again.",
+          "error"
+        );
         router.replace("/(auth)/login");
+        setIsLoading(false);
         return;
       }
 
-      // --- 3. Make API Call ---
-      const response = await patch(
+      await patch(
         `${API_URL}/change-password`,
         { old_password: oldPassword, new_password: newPassword },
-        token // Pass the token for authentication
+        token
       );
 
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Your password has been updated successfully.",
-      });
+      showAlert(
+        "Password Updated",
+        "You will now be logged out for security.",
+        "success"
+      );
 
-      // --- 4. Handle Success ---
-      // For security, log the user out after a password change.
       await AsyncStorage.clear();
       router.replace("/(auth)/login");
     } catch (error: any) {
-      // --- 5. Handle Errors ---
-      Toast.show({
-        type: "error",
-        text1: "Update Failed",
-        text2: error.message || "An unknown error occurred.",
-      });
+      showAlert("Update Failed", "An unexpected error occurred.", "error");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <SafeAreaView style={styles.safeArea}>
+      <Stack.Screen options={{ headerShown: false }} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        style={styles.keyboardAvoidingView}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
-            {/* --- Header Section --- */}
-            <View style={styles.header}>
-              <TouchableOpacity
-                onPress={() => router.back()}
-                style={styles.backButton}
-              >
-                <Ionicons name="arrow-back" size={24} color={colors.text} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Change Password</Text>
-              <Text style={styles.subtitle}>
-                Your new password must be different from the previous one.
-              </Text>
-            </View>
-
-            {/* --- Form Section --- */}
-            <View style={styles.formContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Old Password"
-                placeholderTextColor={colors.text + "80"}
-                secureTextEntry
-                value={oldPassword}
-                onChangeText={setOldPassword}
-                autoCapitalize="none"
+        <View
+          style={styles.container}
+          onStartShouldSetResponder={() => true}
+          onResponderRelease={Keyboard.dismiss}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backButton}
+            >
+              <Ionicons
+                name="arrow-back-outline"
+                size={28}
+                color={colors.text}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="New Password"
-                placeholderTextColor={colors.text + "80"}
-                secureTextEntry
-                value={newPassword}
-                onChangeText={setNewPassword}
-                autoCapitalize="none"
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm New Password"
-                placeholderTextColor={colors.text + "80"}
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                autoCapitalize="none"
-              />
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  { backgroundColor: colors.primary },
-                  isLoading && styles.buttonDisabled,
-                ]}
-                onPress={handlePasswordChange}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text style={styles.buttonText}>Update Password</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <Text style={styles.title}>Change Password</Text>
+            <Text style={styles.subtitle}>
+              Your new password must be at least 8 characters long.
+            </Text>
           </View>
-        </TouchableWithoutFeedback>
+
+          {/* Form */}
+          <View style={styles.formContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Current Password"
+              placeholderTextColor={colors.text + "80"}
+              secureTextEntry
+              value={oldPassword}
+              onChangeText={setOldPassword}
+              autoCapitalize="none"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              placeholderTextColor={colors.text + "80"}
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+              autoCapitalize="none"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm New Password"
+              placeholderTextColor={colors.text + "80"}
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              style={[styles.button, isLoading && styles.buttonDisabled]}
+              onPress={handlePasswordChange}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.buttonText}>Update Password</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <View />
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -652,3 +652,111 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
   // Return base styles for mobile
   return baseStyles;
 };
+
+export const createChangePasswordStyles = (colors: any, dark: boolean) => {
+  // --- Base Styles for Mobile (iOS/Android) ---
+  const baseStyles = StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
+    },
+    container: {
+      flex: 1,
+      justifyContent: "space-between",
+      paddingTop: Platform.OS === "android" ? 20 : 40,
+      paddingBottom: 24,
+    },
+    header: {
+      paddingHorizontal: 24,
+    },
+    backButton: {
+      position: "absolute",
+      top: Platform.OS === "android" ? 25 : 0,
+      left: 24,
+      zIndex: 1,
+      padding: 5,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: "bold",
+      color: colors.text,
+      marginBottom: 8,
+      textAlign: "center",
+      marginTop: 40,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: colors.text + "AA", // Add some transparency
+      textAlign: "center",
+      marginBottom: 40,
+    },
+    formContainer: {
+      paddingHorizontal: 24,
+    },
+    input: {
+      backgroundColor: dark ? "rgba(255, 255, 255, 0.1)" : "#F3F4F6",
+      borderRadius: 12,
+      padding: 18,
+      fontSize: 16,
+      color: colors.text,
+      marginBottom: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    button: {
+      backgroundColor: colors.primary,
+      borderRadius: 12,
+      padding: 18,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 10,
+    },
+    buttonDisabled: {
+      backgroundColor: dark ? "#4B5563" : "#D1D5DB", // Muted colors for disabled state
+    },
+    buttonText: {
+      color: "#FFFFFF",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+  });
+
+  // --- Web-Specific Overrides ---
+  if (Platform.OS === "web") {
+    return StyleSheet.create({
+      ...baseStyles,
+      safeArea: {
+        ...baseStyles.safeArea,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      container: {
+        ...baseStyles.container,
+        maxWidth: 480,
+        width: "100%",
+        justifyContent: "center",
+        paddingTop: 0,
+        backgroundColor: colors.card,
+        borderRadius: 16,
+        padding: 40,
+        boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+      },
+      backButton: {
+        ...baseStyles.backButton,
+        top: 20,
+        left: 20,
+      },
+      title: {
+        ...baseStyles.title,
+        marginTop: 0,
+      },
+    });
+  }
+
+  // Return base styles for mobile
+  return baseStyles;
+};
