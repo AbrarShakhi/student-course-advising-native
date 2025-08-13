@@ -1,5 +1,6 @@
 import { createAccountScreenStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,6 +11,7 @@ import {
   Alert,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -22,6 +24,14 @@ interface StudentData {
   first_name: string;
   last_name: string;
   email: string;
+  mobile_no: string;
+  address: string;
+  gardian_name: string;
+  gardian_phone: string;
+  is_dismissed: boolean;
+  is_graduated: boolean;
+  credit_completed: number;
+  dept_id: number;
 }
 
 export default function AccountScreen() {
@@ -53,11 +63,9 @@ export default function AccountScreen() {
           const data: StudentData = await response.json();
           setUserData(data);
         } else if (response.status === 401) {
-          // Token expired or invalid, force re-login
           await AsyncStorage.removeItem("access_token");
           router.replace("/(auth)/login");
         } else {
-          // Handle other API errors
           Alert.alert("Error", "Failed to fetch user data.");
         }
       } catch (error) {
@@ -88,7 +96,6 @@ export default function AccountScreen() {
     );
   }
 
-  // If no user data is loaded, show a fallback or redirect
   if (!userData) {
     return (
       <View style={styles.loadingContainer}>
@@ -100,40 +107,148 @@ export default function AccountScreen() {
     );
   }
 
-  const { student_id, first_name, last_name } = userData;
+  const {
+    student_id,
+    first_name,
+    last_name,
+    email,
+    mobile_no,
+    address,
+    gardian_name,
+    gardian_phone,
+    is_dismissed,
+    is_graduated,
+    credit_completed,
+    dept_id,
+  } = userData;
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.profileSection}>
-        <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          }}
-          style={styles.avatar}
-        />
-        <Text style={styles.name}>{`${first_name} ${last_name}`}</Text>
-        <Text style={styles.studentId}>{student_id}</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.profileSection}>
+          <Image
+            source={{
+              uri: "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            }}
+            style={styles.avatar}
+          />
+          <Text style={styles.name}>{`${first_name} ${last_name}`}</Text>
+          <Text style={styles.studentId}>{student_id}</Text>
+        </View>
 
-      <View style={styles.actionsSection}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleChangePassword}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.actionButtonText}>Change Password</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleLogout} activeOpacity={0.8}>
-          <LinearGradient
-            colors={["#FF5252", "#E84457", "#D1365C"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.logoutButton}
+        <View style={styles.detailsSection}>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="mail"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Email</Text>
+              <Text style={styles.detailValue}>{email}</Text>
+            </View>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="call"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Mobile No.</Text>
+              <Text style={styles.detailValue}>{mobile_no}</Text>
+            </View>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="location"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Address</Text>
+              <Text style={styles.detailValue}>{address}</Text>
+            </View>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="person-circle"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Guardian Name</Text>
+              <Text style={styles.detailValue}>{gardian_name}</Text>
+            </View>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="call"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Guardian Phone</Text>
+              <Text style={styles.detailValue}>{gardian_phone}</Text>
+            </View>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="school"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Credits Completed</Text>
+              <Text style={styles.detailValue}>{credit_completed}</Text>
+            </View>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="ribbon"
+              size={20}
+              color={colors.text + "80"}
+              style={styles.icon}
+            />
+            <View>
+              <Text style={styles.detailLabel}>Status</Text>
+              <Text style={styles.detailValue}>
+                {is_graduated
+                  ? "Graduated"
+                  : is_dismissed
+                    ? "Dismissed"
+                    : "Active"}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.actionsSection}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleChangePassword}
+            activeOpacity={0.8}
           >
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
+            <Text style={styles.actionButtonText}>Change Password</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} activeOpacity={0.8}>
+            <LinearGradient
+              colors={["#FF5252", "#E84457", "#D1365C"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.logoutButton}
+            >
+              <Text style={styles.logoutButtonText}>Logout</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

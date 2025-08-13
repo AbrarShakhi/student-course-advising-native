@@ -33,7 +33,10 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
     container: {
       flex: 1,
       backgroundColor: colors.background,
+    },
+    scrollContent: {
       paddingTop: Platform.OS === "android" ? 80 : 50,
+      paddingBottom: 50,
     },
     loadingContainer: {
       flex: 1,
@@ -68,8 +71,34 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       color: colors.text + "AA",
       marginTop: 4,
     },
+    detailsSection: {
+      marginTop: 24,
+      paddingHorizontal: 24,
+      marginBottom: 24,
+    },
+    detailItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: dark
+        ? "rgba(150, 149, 149, 0.2)"
+        : "rgba(0, 0, 0, 0.05)",
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+    },
+    icon: {
+      marginRight: 16,
+    },
+    detailLabel: {
+      fontSize: 14,
+      color: colors.text + "80",
+    },
+    detailValue: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: colors.text,
+    },
     actionsSection: {
-      marginTop: "10%",
       paddingHorizontal: 24,
     },
     actionButton: {
@@ -112,12 +141,23 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
         width: "100%",
         alignSelf: "center",
       },
+      scrollContent: {
+        ...baseStyles.scrollContent,
+        maxWidth: 600,
+        width: "100%",
+        alignSelf: "center",
+      },
       profileSection: {
         ...baseStyles.profileSection,
         maxWidth: 600,
         width: "100%",
         borderBottomWidth: 0,
         paddingBottom: 0,
+      },
+      detailsSection: {
+        ...baseStyles.detailsSection,
+        maxWidth: 600,
+        width: "100%",
       },
       actionsSection: {
         ...baseStyles.actionsSection,
