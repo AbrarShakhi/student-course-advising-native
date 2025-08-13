@@ -162,6 +162,7 @@ export default function ChangePasswordScreen() {
               style={[styles.button, isLoading && styles.buttonDisabled]}
               onPress={handlePasswordChange}
               disabled={isLoading}
+              activeOpacity={0.8}
             >
               {isLoading ? (
                 <ActivityIndicator color="#FFFFFF" />

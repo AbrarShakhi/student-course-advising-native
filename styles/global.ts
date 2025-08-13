@@ -35,60 +35,71 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       backgroundColor: colors.background,
       paddingTop: Platform.OS === "android" ? 80 : 50,
     },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.background,
+    },
     profileSection: {
-      alignItems: "flex-start",
+      alignItems: "center",
       paddingHorizontal: 24,
       paddingBottom: 24,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
+      marginTop: 20,
     },
     avatar: {
-      width: 110,
-      height: 110,
-      marginTop: -10,
+      width: 120,
+      height: 120,
       borderRadius: 60,
       marginBottom: 16,
+      borderWidth: 3,
+      borderColor: colors.border,
     },
     name: {
-      fontSize: 23,
+      fontSize: 25,
       fontWeight: "bold",
       color: colors.text,
-      marginLeft: 10,
+      marginTop: 8,
     },
     studentId: {
-      fontSize: 16,
+      fontSize: 18,
       color: colors.text + "AA",
       marginTop: 4,
-      marginLeft: 10,
     },
     actionsSection: {
-      marginTop: "70%",
+      marginTop: "10%",
       paddingHorizontal: 24,
-      marginBottom: 10,
     },
     actionButton: {
       backgroundColor: dark
-        ? "rgba(150, 149, 149, 0.43)"
+        ? "rgba(150, 149, 149, 0.2)"
         : "rgba(0, 0, 0, 0.05)",
       borderRadius: 12,
-      padding: 20,
+      padding: 18,
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "center",
       marginBottom: 16,
     },
     actionButtonText: {
       fontSize: 16,
+      fontWeight: "500",
       color: colors.text,
     },
     logoutButton: {
-      backgroundColor: dark
-        ? "rgba(255, 82, 82, 0.35)"
-        : "rgba(255, 82, 82, 0.1)",
+      borderRadius: 12,
+      padding: 18,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 16,
     },
     logoutButtonText: {
-      color: "#FF5252",
+      color: "#FFFFFF",
       fontWeight: "bold",
+      fontSize: 16,
     },
   });
 
@@ -97,26 +108,24 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       ...baseStyles,
       container: {
         ...baseStyles.container,
-        justifyContent: "center",
-        alignItems: "center",
+        maxWidth: 600,
+        width: "100%",
+        alignSelf: "center",
       },
       profileSection: {
         ...baseStyles.profileSection,
-        maxWidth: 480,
+        maxWidth: 600,
         width: "100%",
-        alignSelf: "center",
         borderBottomWidth: 0,
         paddingBottom: 0,
       },
       actionsSection: {
         ...baseStyles.actionsSection,
-        maxWidth: 480,
+        maxWidth: 600,
         width: "100%",
-        alignSelf: "center",
       },
     });
   }
-
   return baseStyles;
 };
 
