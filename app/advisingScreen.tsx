@@ -106,10 +106,10 @@ export default function AdvisingScreen() {
 
         <View style={styles.detailsContainer}>
           <View style={styles.detailItem}>
-            <Text style={styles.detailLabel}>Current Semester</Text>
+            <Text style={styles.detailLabel}>Current Semester and Year</Text>
             <Text
               style={styles.detailValue}
-            >{`${curr_season}, ${curr_year}`}</Text>
+            >{`${curr_season} / ${curr_year}`}</Text>
           </View>
           <View style={styles.detailItem}>
             <Text style={styles.detailLabel}>Min. Credits Needed</Text>
