@@ -31,18 +31,19 @@ export async function patch<T>(
   data: any,
   token: string | null
 ): Promise<T> {
-  // A token is required for this protected route.
-  if (!token) {
-    throw new Error("Authentication token is missing for the request.");
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  // Only add the Authorization header if a token exists.
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
   }
+
   try {
     const response = await fetch(url, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        // This correctly sends the token to the server.
-        Authorization: `Bearer ${token}`,
-      },
+      headers: headers,
       body: JSON.stringify(data),
     });
 
