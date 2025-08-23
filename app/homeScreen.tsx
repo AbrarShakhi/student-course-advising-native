@@ -34,6 +34,10 @@ type SemesterInfo = {
   season_name: string;
 };
 
+type SemestersResponse = {
+  semesters: SemesterInfo[];
+};
+
 type GroupedSchedule = {
   [key: string]: ScheduleItem[];
 };
@@ -41,6 +45,10 @@ type GroupedSchedule = {
 // --- Helper Functions ---
 const getStudentId = async (): Promise<string | null> => {
   return await AsyncStorage.getItem("student_id");
+};
+
+const getAccessToken = async (): Promise<string | null> => {
+  return await AsyncStorage.getItem("accessToken");
 };
 
 // --- Main Component ---
@@ -57,6 +65,7 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [studentId, setStudentId] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [availableSeasons, setAvailableSeasons] = useState<
@@ -77,9 +86,13 @@ export default function HomeScreen() {
             throw new Error("Student ID not found. Please log in again.");
           setStudentId(id);
 
-          const semestersData = await get<{ semesters: SemesterInfo[] }>(
-            `${API_URL}/list-semesters`
-          );
+          const token = await getAccessToken();
+          setAccessToken(token);
+
+          const semestersData = (await get(
+            `${API_URL}/list-semesters`,
+            token
+          )) as SemestersResponse; // <-- Cast the response to the new type
 
           if (
             !semestersData.semesters ||
@@ -88,19 +101,26 @@ export default function HomeScreen() {
             throw new Error("No semester data could be found.");
           }
 
+          // FIX: Explicitly type 's' as SemesterInfo to resolve 'any' and 'unknown' errors
           const years = [
-            ...new Set(semestersData.semesters.map((s) => s.year)),
+            ...new Set(
+              semestersData.semesters.map((s: SemesterInfo) => s.year)
+            ),
           ].sort((a, b) => b - a);
           const seasonMap = new Map<number, { id: number; name: string }>();
-          semestersData.semesters.forEach((s) =>
+
+          // FIX: Explicitly type 's' as SemesterInfo
+          semestersData.semesters.forEach((s: SemesterInfo) =>
             seasonMap.set(s.season_id, { id: s.season_id, name: s.season_name })
           );
 
           setAvailableYears(years);
           setAvailableSeasons(Array.from(seasonMap.values()));
 
+          // FIX: Explicitly type 'a' and 'b' as SemesterInfo
           const latestSemester = [...semestersData.semesters].sort(
-            (a, b) => b.year - a.year || b.season_id - a.season_id
+            (a: SemesterInfo, b: SemesterInfo) =>
+              b.year - a.year || b.season_id - a.season_id
           )[0];
 
           setSelectedYear(latestSemester.year);
@@ -116,19 +136,20 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
-    if (isInitialLoading) return;
+    if (isInitialLoading || !accessToken) return;
 
     const fetchSchedule = async () => {
-      if (!selectedYear || !selectedSeason || !studentId) return;
+      if (!selectedYear || !selectedSeason) return;
 
       setScheduleLoading(true);
       setError(null);
       setSchedule([]);
 
       try {
-        const url = `${API_URL}/class-schedule?student_id=${studentId}&year=${selectedYear}&season_id=${selectedSeason}`;
-        const data = await get<{ schedule: ScheduleItem[] }>(url);
-        setSchedule(data.schedule || []);
+        const url = `${API_URL}/class-schedule?year=${selectedYear}&season_id=${selectedSeason}`;
+        const data = await get(url, accessToken);
+        const scheduleData = data as { schedule: ScheduleItem[] };
+        setSchedule(scheduleData.schedule || []);
       } catch (e: any) {
         setError(e.message);
         setSchedule([]);
@@ -137,12 +158,10 @@ export default function HomeScreen() {
       }
     };
     fetchSchedule();
-  }, [selectedYear, selectedSeason, studentId, isInitialLoading]);
+  }, [selectedYear, selectedSeason, accessToken, isInitialLoading]);
 
   // --- Data Memoization ---
   const groupedSchedule = useMemo<GroupedSchedule>(() => {
-    // **THE FIX IS HERE**
-    // This map translates abbreviated day names from the API to full names.
     const dayMap: { [key: string]: string } = {
       Sat: "Saturday",
       Sun: "Sunday",
@@ -154,7 +173,6 @@ export default function HomeScreen() {
     };
 
     return schedule.reduce((acc, item) => {
-      // Use the map to get the full day name, or default to "Unscheduled".
       const fullDay = dayMap[item.day] || "Unscheduled";
       if (!acc[fullDay]) {
         acc[fullDay] = [];

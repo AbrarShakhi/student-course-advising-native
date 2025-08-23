@@ -18,7 +18,7 @@ import {
 
 import { createChangePasswordStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
-import { patch } from "@/utils/fetch";
+import { APIError, patch } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
 
 const getAuthToken = async (): Promise<string | null> => {
@@ -92,7 +92,11 @@ export default function ChangePasswordScreen() {
       await AsyncStorage.clear();
       router.replace("/(auth)/login");
     } catch (error: any) {
-      showAlert("Update Failed", "An unexpected error occurred.", "error");
+      if (error instanceof APIError) {
+        showAlert("Update Failed", error.message, "error");
+      } else {
+        showAlert("Update Failed", "An unexpected error occurred.", "error");
+      }
     } finally {
       setIsLoading(false);
     }

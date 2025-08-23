@@ -1,6 +1,6 @@
 import { createActivateStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
-import { patch, post } from "@/utils/fetch";
+import { APIError, patch, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useTheme } from "@react-navigation/native";
@@ -46,10 +46,20 @@ export default function ActivateScreen() {
       );
 
       setOtpSent(true);
-      showAlert("Info", "Check your email for the OTP.");
+      // Use a more specific success message based on the backend response
+      showAlert(
+        "Success",
+        "OTP sent successfully. Check your email.",
+        "success"
+      );
     } catch (error: any) {
-      showAlert("Error", "Failed to send OTP.");
-
+      if (error instanceof APIError) {
+        // Use the specific error message from the backend
+        showAlert("Error", error.message, "error");
+      } else {
+        // Fallback for network or other unexpected errors
+        showAlert("Error", "Failed to send OTP. Please try again.", "error");
+      }
       setOtpSent(false);
     } finally {
       setLoading(false);
@@ -58,23 +68,31 @@ export default function ActivateScreen() {
 
   const handleActivate = async () => {
     if (!studentId || !otp || !password) {
-      showAlert("Error", "Please fill all fields.");
+      showAlert("Error", "Please fill all fields.", "error");
       return;
     }
     setLoading(true);
     try {
-      await post(ACTIVATE_URL, {
-        student_id: studentId,
-        password,
-        otp,
-      });
+      await post(
+        ACTIVATE_URL,
+        {
+          student_id: studentId,
+          password,
+          otp,
+        },
+        null
+      );
       showAlert("Success", "Account activated! You can now log in.", "success");
       setStudentId("");
       setOtp("");
       setPassword("");
       router.replace("/(auth)/login");
     } catch (error: any) {
-      showAlert("Error", "Activation failed.", "error");
+      if (error instanceof APIError) {
+        showAlert("Error", error.message, "error");
+      } else {
+        showAlert("Error", "Activation failed. Please try again.", "error");
+      }
     } finally {
       setLoading(false);
     }

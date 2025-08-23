@@ -1,6 +1,6 @@
 import { createForgotStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
-import { patch, post } from "@/utils/fetch";
+import { APIError, patch, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useTheme } from "@react-navigation/native";
@@ -46,10 +46,14 @@ export default function forgot() {
       );
 
       setOtpSent(true);
-      showAlert("Info", "Check your email for the OTP.");
+      showAlert("Success", "Check your email for the OTP.", "success");
     } catch (error: any) {
-      showAlert("Error", "Failed to send OTP.");
-
+      if (error instanceof APIError) {
+        // Use the specific message from the backend
+        showAlert("Error", error.message, "error");
+      } else {
+        showAlert("Error", "Failed to send OTP. Please try again.", "error");
+      }
       setOtpSent(false);
     } finally {
       setLoading(false);
@@ -63,18 +67,30 @@ export default function forgot() {
     }
     setLoading(true);
     try {
-      await post(ForgotURL, {
-        student_id: studentId,
-        password,
-        otp,
-      });
-      showAlert("Success", "Password Reset Successfully!", "success");
+      await post(
+        ForgotURL,
+        {
+          student_id: studentId,
+          password,
+          otp,
+        },
+        null
+      );
+      showAlert("Success", "Password updated successfully!", "success");
       setStudentId("");
       setOtp("");
       setPassword("");
       router.replace("/(auth)/login");
     } catch (error: any) {
-      showAlert("Error", "Activation failed.", "error");
+      if (error instanceof APIError) {
+        showAlert("Error", error.message, "error");
+      } else {
+        showAlert(
+          "Error",
+          "Failed to reset password. Please try again.",
+          "error"
+        );
+      }
     } finally {
       setLoading(false);
     }

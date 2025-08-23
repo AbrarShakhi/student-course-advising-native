@@ -1,6 +1,6 @@
 import { createLoginStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
-import { post } from "@/utils/fetch";
+import { APIError, post } from "@/utils/fetch";
 import showAlert from "@/utils/showAlert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
@@ -36,10 +36,14 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      const response = await post<{ access_token: string }>(LOGIN_URL, {
-        student_id: studentId,
-        password: password,
-      });
+      const response = await post<{ access_token: string }>(
+        LOGIN_URL,
+        {
+          student_id: studentId,
+          password: password,
+        },
+        null // No token needed for login
+      );
 
       // Store token and student ID
       await Promise.all([
@@ -50,7 +54,15 @@ export default function LoginScreen() {
       // Navigate to home
       router.replace("/");
     } catch (error: any) {
-      showAlert("Error", "Invalid student ID or password.", "error");
+      if (error instanceof APIError) {
+        showAlert("Error", error.message, "error");
+      } else {
+        showAlert(
+          "Error",
+          "An unexpected error occurred. Please try again.",
+          "error"
+        );
+      }
     } finally {
       setLoading(false);
     }
