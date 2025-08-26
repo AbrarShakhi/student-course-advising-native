@@ -1,6 +1,6 @@
 import { createAdvisingScreenStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
-import showAlert from "@/utils/showAlert"; // Import the showAlert function
+import showAlert from "@/utils/showAlert";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "@react-navigation/native";
