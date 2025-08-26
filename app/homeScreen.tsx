@@ -17,7 +17,6 @@ import { createHomeStyles } from "@/styles/global";
 import { API_URL } from "@/utils/api";
 import { get } from "@/utils/fetch";
 
-// --- Type Definitions ---
 type ScheduleItem = {
   course_id: string;
   section_no: number;
@@ -42,16 +41,14 @@ type GroupedSchedule = {
   [key: string]: ScheduleItem[];
 };
 
-// --- Helper Functions ---
 const getStudentId = async (): Promise<string | null> => {
   return await AsyncStorage.getItem("student_id");
 };
 
 const getAccessToken = async (): Promise<string | null> => {
-  return await AsyncStorage.getItem("accessToken");
+  return await AsyncStorage.getItem("access_token");
 };
 
-// --- Main Component ---
 export default function HomeScreen() {
   const { colors, dark } = useTheme();
   const styles = createHomeStyles(colors, dark);
@@ -59,7 +56,6 @@ export default function HomeScreen() {
     pickerItem: { color: colors.text },
   });
 
-  // --- State Management ---
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,25 +70,36 @@ export default function HomeScreen() {
   const [selectedYear, setSelectedYear] = useState<number>();
   const [selectedSeason, setSelectedSeason] = useState<number>();
 
-  // --- Data Fetching Effects ---
   useFocusEffect(
     useCallback(() => {
-      const fetchInitialData = async () => {
+      let isMounted = true;
+      const fetchAllData = async () => {
         setIsInitialLoading(true);
         setError(null);
         try {
+          // Attempting to fetch student ID and access token from AsyncStorage...
           const id = await getStudentId();
-          if (!id)
-            throw new Error("Student ID not found. Please log in again.");
-          setStudentId(id);
-
           const token = await getAccessToken();
+
+          if (!isMounted) return;
+
+          // Check for token and student ID. Both are required for the schedule.
+          if (!token || !id) {
+            throw new Error(
+              "Authentication token or Student ID not found. Please log in again."
+            );
+          }
+
+          setStudentId(id);
           setAccessToken(token);
 
-          const semestersData = (await get(
+          // 1. Fetch available semesters (this endpoint does not require auth based on your backend code)
+          const semestersData = await get<SemestersResponse>(
             `${API_URL}/list-semesters`,
             token
-          )) as SemestersResponse; // <-- Cast the response to the new type
+          );
+
+          if (!isMounted) return;
 
           if (
             !semestersData.semesters ||
@@ -101,56 +108,75 @@ export default function HomeScreen() {
             throw new Error("No semester data could be found.");
           }
 
-          // FIX: Explicitly type 's' as SemesterInfo to resolve 'any' and 'unknown' errors
           const years = [
             ...new Set(
               semestersData.semesters.map((s: SemesterInfo) => s.year)
             ),
           ].sort((a, b) => b - a);
           const seasonMap = new Map<number, { id: number; name: string }>();
-
-          // FIX: Explicitly type 's' as SemesterInfo
           semestersData.semesters.forEach((s: SemesterInfo) =>
             seasonMap.set(s.season_id, { id: s.season_id, name: s.season_name })
           );
 
-          setAvailableYears(years);
-          setAvailableSeasons(Array.from(seasonMap.values()));
-
-          // FIX: Explicitly type 'a' and 'b' as SemesterInfo
           const latestSemester = [...semestersData.semesters].sort(
             (a: SemesterInfo, b: SemesterInfo) =>
               b.year - a.year || b.season_id - a.season_id
           )[0];
 
+          setAvailableYears(years);
+          setAvailableSeasons(Array.from(seasonMap.values()));
           setSelectedYear(latestSemester.year);
           setSelectedSeason(latestSemester.season_id);
+
+          // 2. Fetch the class schedule using the access token
+          setScheduleLoading(true);
+          const scheduleUrl = `${API_URL}/class-schedule?student_id=${id}&year=${latestSemester.year}&season_id=${latestSemester.season_id}`;
+          const scheduleData = await get<{ schedule: ScheduleItem[] }>(
+            scheduleUrl,
+            token
+          );
+
+          if (!isMounted) return;
+
+          setSchedule(scheduleData.schedule || []);
         } catch (e: any) {
-          setError(e.message);
+          if (isMounted) {
+            console.error("Error during data fetching:", e); // Added log for more detail
+            setError(e.message);
+            setSchedule([]);
+          }
         } finally {
-          setIsInitialLoading(false);
+          if (isMounted) {
+            setIsInitialLoading(false);
+            setScheduleLoading(false);
+          }
         }
       };
-      fetchInitialData();
-    }, [])
+
+      fetchAllData();
+
+      return () => {
+        isMounted = false;
+      };
+    }, []) // Empty dependency array means this runs once when the screen is focused
   );
 
+  // This useEffect will run when the user selects a new year or season
   useEffect(() => {
-    if (isInitialLoading || !accessToken) return;
+    // Only run if we have a token and the user has selected a semester
+    if (!accessToken || !selectedYear || !selectedSeason) return;
 
     const fetchSchedule = async () => {
-      if (!selectedYear || !selectedSeason) return;
-
       setScheduleLoading(true);
       setError(null);
       setSchedule([]);
 
       try {
-        const url = `${API_URL}/class-schedule?year=${selectedYear}&season_id=${selectedSeason}`;
-        const data = await get(url, accessToken);
-        const scheduleData = data as { schedule: ScheduleItem[] };
-        setSchedule(scheduleData.schedule || []);
+        const url = `${API_URL}/class-schedule?student_id=${studentId}&year=${selectedYear}&season_id=${selectedSeason}`;
+        const data = await get<{ schedule: ScheduleItem[] }>(url, accessToken);
+        setSchedule(data.schedule || []);
       } catch (e: any) {
+        console.error("Error fetching schedule on selection:", e); // Added log
         setError(e.message);
         setSchedule([]);
       } finally {
@@ -158,7 +184,7 @@ export default function HomeScreen() {
       }
     };
     fetchSchedule();
-  }, [selectedYear, selectedSeason, accessToken, isInitialLoading]);
+  }, [selectedYear, selectedSeason, accessToken, studentId]);
 
   // --- Data Memoization ---
   const groupedSchedule = useMemo<GroupedSchedule>(() => {
@@ -171,12 +197,9 @@ export default function HomeScreen() {
       Thu: "Thursday",
       Fri: "Friday",
     };
-
     return schedule.reduce((acc, item) => {
       const fullDay = dayMap[item.day] || "Unscheduled";
-      if (!acc[fullDay]) {
-        acc[fullDay] = [];
-      }
+      if (!acc[fullDay]) acc[fullDay] = [];
       acc[fullDay].push(item);
       return acc;
     }, {} as GroupedSchedule);

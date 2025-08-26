@@ -844,6 +844,11 @@ export const createAdvisingScreenStyles = (colors: any, dark: boolean) => {
       marginBottom: 24,
       borderWidth: 1,
       borderColor: colors.border,
+      shadowColor: dark ? "#000" : "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 5,
     },
     statusRow: {
       flexDirection: "row",
@@ -870,19 +875,24 @@ export const createAdvisingScreenStyles = (colors: any, dark: boolean) => {
       fontWeight: "600",
       color: colors.text,
     },
-    // --- New Styles ---
     advisingClosedContainer: {
       padding: 40,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: colors.card,
       borderRadius: 16,
+      shadowColor: dark ? "#000" : "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 5,
     },
     advisingClosedText: {
       fontSize: 18,
       color: colors.text,
       textAlign: "center",
       opacity: 0.8,
+      marginTop: 10,
     },
     searchInputContainer: {
       flexDirection: "row",
@@ -909,16 +919,22 @@ export const createAdvisingScreenStyles = (colors: any, dark: boolean) => {
       marginTop: 10,
     },
     courseCard: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       backgroundColor: colors.card,
       borderRadius: 12,
       padding: 16,
       marginBottom: 12,
       borderLeftWidth: 4,
+      shadowColor: dark ? "#000" : "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
     },
-    courseCardHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+    courseInfo: {
+      flex: 1,
     },
     courseId: {
       fontSize: 16,
@@ -928,11 +944,25 @@ export const createAdvisingScreenStyles = (colors: any, dark: boolean) => {
     courseCredit: {
       fontSize: 14,
       color: colors.text + "99",
+      marginTop: 4,
     },
     courseTitle: {
       fontSize: 18,
       color: colors.text,
       marginTop: 8,
+    },
+    actionIcon: {
+      marginLeft: 16,
+    },
+    toastContainer: {
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 16,
+    },
+    toastText: {
+      color: "#fff",
+      textAlign: "center",
+      fontWeight: "bold",
     },
   });
 
