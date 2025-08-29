@@ -61,14 +61,21 @@ export default function AdvisingScreen() {
       if (uniData.is_advising) {
         const token = await AsyncStorage.getItem("access_token");
         if (!token) {
-          throw new Error("Authentication token not found. Please log in.");
+          showAlert(
+            "Error",
+            "Authentication token not found. Please log in.",
+            "error"
+          );
+          return;
         }
 
         const coursesResponse = await fetch(`${API_URL}/list-courses`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!coursesResponse.ok)
-          throw new Error("Failed to fetch eligible courses.");
+        if (!coursesResponse.ok) {
+          showAlert("Error", "Failed to fetch eligible courses.", "error");
+          return;
+        }
         const coursesData = await coursesResponse.json();
         setEligibleCourses(coursesData.courses || []);
 
@@ -76,14 +83,21 @@ export default function AdvisingScreen() {
           `${API_URL}/list-chosen-courses?season_id=${uniData.curr_season}&year=${uniData.curr_year}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (!chosenResponse.ok)
-          throw new Error("Failed to fetch chosen courses.");
+        if (!chosenResponse.ok) {
+          showAlert("Error", "Failed to fetch chosen courses.", "error");
+          return;
+        }
         const chosenData = await chosenResponse.json();
         setChosenCourses(chosenData.chosen_courses || []);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Fetch error:", err);
-      setError("Failed to load data. Please check your network connection.");
+      // The error is handled here and displayed using showAlert
+      showAlert(
+        "Error",
+        "Failed to load data. Please check your network connection.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -115,11 +129,13 @@ export default function AdvisingScreen() {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to ${action} course.`);
+        const errorMessage = errorData.message || `Failed to ${action} course.`;
+        showAlert("Error", errorMessage, "error");
+        return;
       }
       const result = await response.json();
       showAlert("Success", result.message, "success");
-      fetchAdvisingData(); // Refresh data after successful action
+      fetchAdvisingData();
     } catch (err: any) {
       console.error("API error:", err);
       showAlert("Error", err.message, "error");
@@ -139,14 +155,21 @@ export default function AdvisingScreen() {
     );
   }, [eligibleCourses, searchTerm]);
 
-  const totalCredits = useMemo(() => {
-    return chosenCourses.reduce((sum, chosen) => {
-      const course = eligibleCourses.find(
-        (c) => c.course_id === chosen.course_id
-      );
-      return sum + (course?.course_credit || 0);
-    }, 0);
+  const chosenCourseDetails = useMemo(() => {
+    const chosenCourseIds = new Set(
+      chosenCourses.map((chosen) => chosen.course_id)
+    );
+    return eligibleCourses.filter((course) =>
+      chosenCourseIds.has(course.course_id)
+    );
   }, [chosenCourses, eligibleCourses]);
+
+  const totalCredits = useMemo(() => {
+    return chosenCourseDetails.reduce(
+      (sum, course) => sum + course.course_credit,
+      0
+    );
+  }, [chosenCourseDetails]);
 
   const renderCourseCard = (course: Course, isChosen: boolean) => {
     return (
@@ -208,12 +231,6 @@ export default function AdvisingScreen() {
 
   const { is_advising, curr_season, curr_year, min_cred_need, max_cred_need } =
     universityData;
-
-  const chosenCourseDetails = chosenCourses
-    .map((chosen) =>
-      eligibleCourses.find((c) => c.course_id === chosen.course_id)
-    )
-    .filter(Boolean) as Course[];
 
   return (
     <SafeAreaView style={styles.safeArea}>
