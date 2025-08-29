@@ -73,7 +73,7 @@ export default function AdvisingScreen() {
         setEligibleCourses(coursesData.courses || []);
 
         const chosenResponse = await fetch(
-          `${API_URL}/list-chosen-courses?season_id=${uniData.curr_season_id}&year=${uniData.curr_year}`,
+          `${API_URL}/list-chosen-courses?season_id=${uniData.curr_season}&year=${uniData.curr_year}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!chosenResponse.ok)
@@ -104,6 +104,8 @@ export default function AdvisingScreen() {
         showAlert("Error", "Authentication token not found.", "error");
         return;
       }
+      console.log(course_id);
+
       const response = await fetch(
         `${API_URL}/${action}-course?course_id=${course_id}`,
         {
