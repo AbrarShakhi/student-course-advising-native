@@ -50,15 +50,7 @@ export const createAccountScreenStyles = (colors: any, dark: boolean) => {
       paddingBottom: 24,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
-      marginTop: 20,
-    },
-    avatar: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      marginBottom: 16,
-      borderWidth: 3,
-      borderColor: colors.border,
+      marginTop: 15,
     },
     name: {
       fontSize: 25,
@@ -520,7 +512,6 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
       flex: 1,
       backgroundColor: colors.background,
     },
-    // This container holds the ScrollView
     container: {
       flex: 1,
     },
@@ -557,7 +548,7 @@ export const createHomeStyles = (colors: any, dark: boolean) => {
     },
     pickerWrapper: {
       flex: 1,
-      backgroundColor: dark ? "#ccccccff" : "#FFFFFF",
+      backgroundColor: dark ? "#eae7e7ff" : "#FFFFFF",
       borderRadius: 12,
       marginHorizontal: 6, // Space between pickers
     },
@@ -836,6 +827,7 @@ export const createAdvisingScreenStyles = (colors: any, dark: boolean) => {
       color: colors.text,
       marginVertical: 20,
       textAlign: "center",
+      marginTop: Platform.OS === "android" ? 55 : 20,
     },
     statusCard: {
       backgroundColor: colors.card,

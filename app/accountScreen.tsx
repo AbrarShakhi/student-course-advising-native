@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   SafeAreaView,
   ScrollView,
   Text,
@@ -126,12 +125,6 @@ export default function AccountScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.profileSection}>
-          <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1570158268183-d296b2892211?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            }}
-            style={styles.avatar}
-          />
           <Text style={styles.name}>{`${first_name} ${last_name}`}</Text>
           <Text style={styles.studentId}>{student_id}</Text>
         </View>
@@ -168,7 +161,7 @@ export default function AccountScreen() {
               color={colors.text + "80"}
               style={styles.icon}
             />
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.detailLabel}>Address</Text>
               <Text style={styles.detailValue}>{address}</Text>
             </View>

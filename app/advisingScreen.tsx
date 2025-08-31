@@ -185,6 +185,7 @@ export default function AdvisingScreen() {
           handleAction(course.course_id, isChosen ? "deselect" : "select")
         }
         disabled={isActionLoading}
+        activeOpacity={1}
       >
         <View style={styles.courseInfo}>
           <Text style={styles.courseId}>{course.course_id}</Text>

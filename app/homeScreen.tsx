@@ -141,7 +141,7 @@ export default function HomeScreen() {
           setSchedule(scheduleData.schedule || []);
         } catch (e: any) {
           if (isMounted) {
-            console.error("Error during data fetching:", e); // Added log for more detail
+            console.error("Error during data fetching:", e);
             setError(e.message);
             setSchedule([]);
           }
@@ -176,7 +176,7 @@ export default function HomeScreen() {
         const data = await get<{ schedule: ScheduleItem[] }>(url, accessToken);
         setSchedule(data.schedule || []);
       } catch (e: any) {
-        console.error("Error fetching schedule on selection:", e); // Added log
+        console.error("Error fetching schedule on selection:", e);
         setError(e.message);
         setSchedule([]);
       } finally {
@@ -186,16 +186,15 @@ export default function HomeScreen() {
     fetchSchedule();
   }, [selectedYear, selectedSeason, accessToken, studentId]);
 
-  // --- Data Memoization ---
   const groupedSchedule = useMemo<GroupedSchedule>(() => {
     const dayMap: { [key: string]: string } = {
-      Sat: "Saturday",
-      Sun: "Sunday",
-      Mon: "Monday",
-      Tue: "Tuesday",
-      Wed: "Wednesday",
-      Thu: "Thursday",
-      Fri: "Friday",
+      SAT: "Saturday",
+      SUN: "Sunday",
+      MON: "Monday",
+      TUE: "Tuesday",
+      WED: "Wednesday",
+      THU: "Thursday",
+      FRI: "Friday",
     };
     return schedule.reduce((acc, item) => {
       const fullDay = dayMap[item.day] || "Unscheduled";
