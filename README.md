@@ -1,50 +1,86 @@
-# Welcome to your Expo app 👋
+# Student Course Advising Native (React Native)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile client for the Student Course Advising System, built with React Native and Expo. This app allows students to manage their course schedules, view available courses, and interact with faculty and admin features.
 
-## Get started
+This project is part of the broader Student Course Advising ecosystem:
 
-1. Install dependencies
+- **Backend:** [Student Course Advising System (Flask)](https://github.com/AbrarShakhi/student-course-advising-system)
+- **Admin Panel:** [Student Course Advising Admin Panel (React)](https://github.com/Brick-C/student-course-advising-admin)
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- Student authentication and profile management
+- Browse and register for courses
+- View class schedules and faculty information
+- Notifications and updates from admin/faculty
+- Integration with backend RESTful API
 
-   ```bash
-   npx expo start
-   ```
+## Showcase Videos
 
-In the output, you'll find options to open the app in a
+### Class Schedule Generation
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+[![Class Schedule Generation](https://img.youtube.com/vi/Srvguocoa8I/maxresdefault.jpg)](https://youtu.be/Srvguocoa8I)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+_Click the image above to watch the Class Schedule Generation demo_
 
-## Get a fresh project
+### React Native Mobile App
 
-When you're ready, run:
+[![React Native Mobile App](https://img.youtube.com/vi/B77Ff4M3OSE/maxresdefault.jpg)](https://youtu.be/B77Ff4M3OSE)
+
+_Click the image above to watch the React Native Mobile App demo_
+
+### Admin Panel
+
+[![Admin Panel](https://img.youtube.com/vi/5QeuAQ-lrA8/maxresdefault.jpg)](https://youtu.be/5QeuAQ-lrA8)
+
+_Click the image above to watch the Admin Panel demo_
+
+## Getting Started
+
+### 1. Clone the Repository
 
 ```bash
-npm run reset-project
+git clone https://github.com/Brick-C/student-course-advising-native.git
+cd student-course-advising-native
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Install Dependencies
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 3. Start the App
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+You can open the app in:
 
-Join our community of developers creating universal apps.
+- [Expo Go](https://expo.dev/go)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Development build](https://docs.expo.dev/develop/development-builds/introduction/)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 4. Configure Backend Connection
+
+Edit your environment/config files to point to your backend API (see [backend repo](https://github.com/AbrarShakhi/student-course-advising-system) for details).
+
+## Project Structure
+
+- `app/` - Main application code (screens, components, navigation)
+- `assets/` - Images and static files
+- `app-example/` - Example starter code
+- `README.md` - Project documentation
+
+## Troubleshooting
+
+- Ensure your backend API is running and accessible
+- Use the correct Expo CLI version
+- Check your device/emulator network settings
+
+## License
+
+Apache License
+Version 2.0,
